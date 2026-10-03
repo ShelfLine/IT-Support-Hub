@@ -24,7 +24,7 @@
             <h2 class="text-3xl font-black mb-2 tracking-tight">Admin Portal</h2>
             <p class="text-slate-500 mb-10">Sign in to manage service requests.</p>
             <input type="password" id="admin-pwd" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl mb-4 font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-lg" placeholder="••••••••">
-            <button onclick="loginAdmin()" class="w-full bg-slate-900 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-lg hover:-translate-y-0.5 transform">Authenticate</button>
+            <button onclick="window.loginAdmin()" class="w-full bg-slate-900 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-lg hover:-translate-y-0.5 transform">Authenticate</button>
             <p id="login-err" class="text-red-500 text-sm mt-4 font-bold hidden">Invalid credentials.</p>
             <div class="mt-10"><a href="index.html" class="text-slate-400 font-semibold hover:text-slate-800 transition">&larr; Back to User Site</a></div>
         </div>
@@ -41,17 +41,17 @@
             
             <div class="flex-1 px-4 py-6 space-y-1">
                 <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Menu</p>
-                <button id="nav-dashboard" onclick="switchMenu('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-bold transition">
+                <button id="nav-dashboard" onclick="window.switchMenu('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-bold transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                     Dashboard
                 </button>
             </div>
 
             <div class="p-4 border-t border-slate-100 space-y-2">
-                <button onclick="loadTickets()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">
+                <button onclick="window.loadTickets()" class="w-full flex items-center justify-center gap-2 px-4 py-2 bg-indigo-50 text-indigo-600 rounded-lg font-bold text-sm hover:bg-indigo-100 transition">
                     🔄 Refresh Cloud
                 </button>
-                <button onclick="logoutAdmin()" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl font-semibold transition">
+                <button onclick="window.logoutAdmin()" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl font-semibold transition">
                     Logout
                 </button>
             </div>
@@ -60,7 +60,7 @@
         <main class="flex-1 flex flex-col h-screen overflow-hidden">
             <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10 shadow-sm">
                 <h1 id="header-title" class="text-2xl font-black tracking-tight">Overview</h1>
-                <input type="text" oninput="searchTable(this.value)" placeholder="Search tickets..." class="bg-slate-50 border border-slate-200 rounded-full pl-6 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 transition">
+                <input type="text" oninput="window.searchTable(this.value)" placeholder="Search tickets..." class="bg-slate-50 border border-slate-200 rounded-full pl-6 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 transition">
             </header>
 
             <div class="flex-1 overflow-y-auto p-8">
@@ -108,82 +108,100 @@
     </div>
 
     <script>
-        // Supabase Connection using the keys you provided
         const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU';
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        
+        let supabaseClient;
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        } catch(e) {
+            console.error("Supabase Initialization Error:", e);
+        }
 
-        let tickets = [];
-        let searchQuery = "";
+        window.tickets = [];
+        window.searchQuery = "";
 
-        document.getElementById('admin-pwd').addEventListener('keypress', e => { if (e.key === 'Enter') loginAdmin(); });
-        window.onload = () => { if (sessionStorage.getItem('admin_logged_in') === 'true') showDashboard(); };
+        document.getElementById('admin-pwd').addEventListener('keypress', e => { 
+            if (e.key === 'Enter') window.loginAdmin(); 
+        });
 
-        function loginAdmin() {
+        window.onload = () => { 
+            if (sessionStorage.getItem('admin_logged_in') === 'true') {
+                window.showDashboard(); 
+            }
+        };
+
+        window.loginAdmin = function() {
             if(document.getElementById('admin-pwd').value === 'admin123') {
                 sessionStorage.setItem('admin_logged_in', 'true');
-                showDashboard();
+                window.showDashboard();
             } else {
                 document.getElementById('login-err').classList.remove('hidden');
             }
-        }
+        };
         
-        function showDashboard() {
+        window.showDashboard = function() {
             document.getElementById('login-view').classList.remove('active');
             document.getElementById('dashboard-view').classList.add('active');
-            loadTickets();
-        }
+            window.loadTickets();
+        };
         
-        function logoutAdmin() {
+        window.logoutAdmin = function() {
             sessionStorage.removeItem('admin_logged_in');
             window.location.reload();
-        }
+        };
 
-        function switchMenu(page) {
-            // Simplified for brevity
-        }
+        window.switchMenu = function(page) {
+            // Placeholder for future multi-page admin routing
+        };
 
-        async function loadTickets() {
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-indigo-500 font-bold text-lg animate-pulse">Syncing with cloud database...</td></tr>`;
-
-            const { data, error } = await supabase
-                .from('tickets')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if(error) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-red-500 font-bold text-lg">Error connecting to cloud: ${error.message}</td></tr>`;
+        window.loadTickets = async function() {
+            if(!supabaseClient) {
+                alert("Database connection is missing.");
                 return;
             }
 
-            tickets = data || [];
-            
-            document.getElementById('stat-total').innerText = tickets.length;
-            document.getElementById('stat-open').innerText = tickets.filter(t => t.status === 'Open' || t.status === 'Pending').length;
-            document.getElementById('stat-resolved').innerText = tickets.filter(t => t.status === 'Resolved').length;
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-indigo-500 font-bold text-lg animate-pulse">Syncing with cloud database...</td></tr>`;
 
-            renderTable();
-        }
+            try {
+                const { data, error } = await supabaseClient
+                    .from('tickets')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-        function searchTable(query) {
-            searchQuery = query.toLowerCase();
-            renderTable();
-        }
+                if(error) throw error;
 
-        function renderTable() {
+                window.tickets = data || [];
+                
+                document.getElementById('stat-total').innerText = window.tickets.length;
+                document.getElementById('stat-open').innerText = window.tickets.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+                document.getElementById('stat-resolved').innerText = window.tickets.filter(t => t.status === 'Resolved').length;
+
+                window.renderTable();
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-red-500 font-bold text-lg">Error connecting to cloud: ${error.message}</td></tr>`;
+            }
+        };
+
+        window.searchTable = function(query) {
+            window.searchQuery = query.toLowerCase();
+            window.renderTable();
+        };
+
+        window.renderTable = function() {
             const tbody = document.getElementById('admin-table-body');
             tbody.innerHTML = '';
             let displayCount = 0;
             
-            if(tickets.length === 0) {
+            if(window.tickets.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-slate-400 font-bold text-lg">Cloud database is empty.</td></tr>`;
                 return;
             }
 
-            tickets.forEach((t) => {
+            window.tickets.forEach((t) => {
                 const desc = t.description || t.desc || "No description provided"; 
-                if (searchQuery && !t.name.toLowerCase().includes(searchQuery) && !desc.toLowerCase().includes(searchQuery) && !t.id.toLowerCase().includes(searchQuery)) return;
+                if (window.searchQuery && !t.name.toLowerCase().includes(window.searchQuery) && !desc.toLowerCase().includes(window.searchQuery) && !t.id.toLowerCase().includes(window.searchQuery)) return;
                 displayCount++;
 
                 const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
@@ -209,7 +227,7 @@
                             <span class="text-sm font-semibold text-slate-600">${t.date}</span>
                         </td>
                         <td class="p-6">
-                            <select onchange="updateStatus('${t.id}', this.value)" class="${sColor} px-3 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer focus:outline-none border">
+                            <select onchange="window.updateStatus('${t.id}', this.value)" class="${sColor} px-3 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer focus:outline-none border">
                                 <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
                                 <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
                                 <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
@@ -217,34 +235,46 @@
                         </td>
                         <td class="p-6">
                             <input type="text" value="${t.engineer === 'Unassigned' ? '' : t.engineer}" placeholder="Assignee..." 
-                                onblur="assignEngineer('${t.id}', this.value)" class="bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 p-1 w-28 text-sm font-bold text-slate-700 focus:outline-none transition placeholder:text-slate-300">
+                                onblur="window.assignEngineer('${t.id}', this.value)" class="bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 p-1 w-28 text-sm font-bold text-slate-700 focus:outline-none transition placeholder:text-slate-300">
                         </td>
                         <td class="p-6 text-right">
-                            <button onclick="deleteTicket('${t.id}')" title="Delete Ticket" class="text-slate-300 hover:text-red-500 font-bold transition p-2 rounded-lg hover:bg-red-50 inline-flex items-center justify-center">
+                            <button onclick="window.deleteTicket('${t.id}')" title="Delete Ticket" class="text-slate-300 hover:text-red-500 font-bold transition p-2 rounded-lg hover:bg-red-50 inline-flex items-center justify-center">
                                 🗑️
                             </button>
                         </td>
                     </tr>
                 `;
             });
-        }
+        };
 
-        async function updateStatus(id, newStatus) {
-            await supabase.from('tickets').update({ status: newStatus }).eq('id', id);
-            loadTickets(); 
-        }
-
-        async function assignEngineer(id, engName) {
-            await supabase.from('tickets').update({ engineer: engName.trim() || 'Unassigned' }).eq('id', id);
-            loadTickets();
-        }
-
-        async function deleteTicket(id) {
-            if(confirm('Delete this ticket permanently from the cloud?')) {
-                await supabase.from('tickets').delete().eq('id', id);
-                loadTickets();
+        window.updateStatus = async function(id, newStatus) {
+            try {
+                await supabaseClient.from('tickets').update({ status: newStatus }).eq('id', id);
+                window.loadTickets(); 
+            } catch (e) {
+                alert("Failed to update status: " + e.message);
             }
-        }
+        };
+
+        window.assignEngineer = async function(id, engName) {
+            try {
+                await supabaseClient.from('tickets').update({ engineer: engName.trim() || 'Unassigned' }).eq('id', id);
+                window.loadTickets();
+            } catch (e) {
+                alert("Failed to assign engineer: " + e.message);
+            }
+        };
+
+        window.deleteTicket = async function(id) {
+            if(confirm('Delete this ticket permanently from the cloud?')) {
+                try {
+                    await supabaseClient.from('tickets').delete().eq('id', id);
+                    window.loadTickets();
+                } catch (e) {
+                    alert("Failed to delete ticket: " + e.message);
+                }
+            }
+        };
     </script>
 </body>
 </html>
