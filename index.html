@@ -92,12 +92,35 @@
                 <h2 class="text-2xl font-black text-slate-800 mb-8 pb-6 border-b border-slate-100">New Request: <span id="selected-category" class="text-indigo-600"></span></h2>
                 <form onsubmit="window.submitTicket(event)" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Full Name" required>
-                        <input type="text" id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Department" required>
-                        <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Mobile Number" required>
-                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Employee ID" required>
+                        <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Full Name" required>
+                        
+                        <!-- NEW DEPARTMENT DROPDOWN -->
+                        <select id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer" required>
+                            <option value="" disabled selected>Select Department...</option>
+                            <option value="Human Resources">Human Resources</option>
+                            <option value="Admin">Admin</option>
+                            <option value="Accounting">Accounting</option>
+                            <option value="Information Technology">Information Technology</option>
+                            <option value="Design">Design</option>
+                            <option value="Saftey">Safety</option>
+                            <option value="Civil">Civil</option>
+                            <option value="Survey">Survey</option>
+                            <option value="P&M">P&M</option>
+                            <option value="Planning">Planning</option>
+                            <option value="Billing">Billing</option>
+                            <option value="DC">DC</option>
+                            <option value="QA/QC">QA/QC</option>
+                            <option value="MEP">MEP</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Instrumentation">Instrumentation</option>
+                            <option value="Executive / Management">Executive / Management</option>
+                            <option value="Other">Other</option>
+                        </select>
+
+                        <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Mobile Number" required>
+                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Employee ID" required>
                     </div>
-                    <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl resize-none" placeholder="Issue Description..." required></textarea>
+                    <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Issue Description..." required></textarea>
                     
                     <button id="submit-btn" type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition">Submit Request</button>
                 </form>
@@ -203,9 +226,17 @@
                 const lastUser = JSON.parse(localStorage.getItem('last_user_details'));
                 if(lastUser) {
                     document.getElementById('t-name').value = lastUser.name || '';
-                    document.getElementById('t-dept').value = lastUser.dept || '';
                     document.getElementById('t-mobile').value = lastUser.mobile || '';
                     document.getElementById('t-empid').value = lastUser.empid || '';
+                    
+                    // Safely set the dropdown if it matches an option
+                    if (lastUser.dept) {
+                        const deptSelect = document.getElementById('t-dept');
+                        const options = Array.from(deptSelect.options).map(opt => opt.value);
+                        if(options.includes(lastUser.dept)) {
+                            deptSelect.value = lastUser.dept;
+                        }
+                    }
                 }
             } catch(e) {}
             
@@ -222,12 +253,13 @@
             btn.disabled = true;
 
             const ticketId = 'TKT-' + Math.floor(1000 + Math.random() * 9000);
+            const deptValue = document.getElementById('t-dept').value;
             
             const newTicket = {
                 id: ticketId,
                 date: new Date().toLocaleDateString(),
                 name: document.getElementById('t-name').value,
-                dept: document.getElementById('t-dept').value,
+                dept: deptValue,
                 mobile: document.getElementById('t-mobile').value,
                 empid: document.getElementById('t-empid').value,
                 category: currentCategory,
@@ -241,6 +273,7 @@
                 const { error } = await supabaseClient.from('tickets').insert([newTicket]);
                 if(error) throw error;
 
+                // Save for next time
                 localStorage.setItem('last_user_details', JSON.stringify({
                     name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
                 }));
