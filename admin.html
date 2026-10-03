@@ -135,9 +135,7 @@
             overlay.classList.toggle('hidden');
         };
 
-        // --- NEW SECURE AUTH FLOW ---
         window.onload = async () => { 
-            // Check if user is already logged in securely via Supabase session
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session) {
                 window.showDashboard();
@@ -180,7 +178,6 @@
             await supabaseClient.auth.signOut();
             window.location.reload();
         };
-        // ------------------------------
 
         window.switchMenu = function(page) {};
 
@@ -190,9 +187,24 @@
             tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-indigo-500 font-bold text-lg animate-pulse">Syncing with cloud database...</td></tr>`;
 
             try {
+                // Fetch chronologically first (newest tickets on top)
                 const { data, error } = await supabaseClient.from('tickets').select('*').order('created_at', { ascending: false });
                 if(error) throw error;
-                window.tickets = data || [];
+                
+                let fetchedTickets = data || [];
+                
+                // --- NEW: SMART SORTING LOGIC ---
+                // Weights: Open = 1, Pending = 2, Resolved = 3
+                const statusWeight = { 'Open': 1, 'Pending': 2, 'Resolved': 3 };
+                
+                fetchedTickets.sort((a, b) => {
+                    const weightA = statusWeight[a.status] || 4;
+                    const weightB = statusWeight[b.status] || 4;
+                    return weightA - weightB;
+                });
+                
+                window.tickets = fetchedTickets;
+                // ---------------------------------
                 
                 document.getElementById('stat-total').innerText = window.tickets.length;
                 document.getElementById('stat-open').innerText = window.tickets.filter(t => t.status === 'Open' || t.status === 'Pending').length;
