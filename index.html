@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Support Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
         .view { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
         .view.active { display: block; opacity: 1; animation: slideUp 0.4s ease-out forwards; }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        /* Smooth input focus */
-        input:focus, textarea:focus { outline: none; border-color: #6366f1; box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15); }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 min-h-screen">
 
-    <!-- Top Navigation -->
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="showHome()">
@@ -24,10 +22,7 @@
                 <h1 class="text-xl font-bold tracking-tight text-slate-900">Support Hub</h1>
             </div>
             <div class="flex items-center gap-6">
-                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-indigo-600 transition flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
-                    Admin Portal
-                </a>
+                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-indigo-600 transition">Admin Portal</a>
                 <div class="w-10 h-10 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold">ME</div>
             </div>
         </div>
@@ -35,123 +30,78 @@
 
     <main class="max-w-6xl mx-auto px-6 py-10">
         
-        <!-- DASHBOARD VIEW -->
         <div id="home-view" class="view active">
-            
-            <!-- Hero Section -->
-            <div class="mb-12 text-center md:text-left">
-                <h2 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">How can we help today?</h2>
-                <p class="text-lg text-slate-500">Select a category below to submit a new request to the IT team.</p>
+            <div class="mb-12 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
+                <div>
+                    <h2 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">How can we help today?</h2>
+                    <p class="text-lg text-slate-500 mb-4">Select a category below to submit a new request to the IT team.</p>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl max-w-sm w-full shadow-sm text-center md:text-left">
+                    <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-1">Daily IT Wisdom</p>
+                    <p id="fun-quote" class="text-sm font-bold text-indigo-800 italic">"Have you tried turning it off and on again?"</p>
+                </div>
             </div>
 
-            <!-- Quick Action Cards -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                <!-- Card 1 -->
-                <div onclick="startRequest('Hardware & Devices')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition duration-300 cursor-pointer group">
-                    <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">💻</div>
+                <div onclick="startRequest('Hardware & Devices')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                    <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💻</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Hardware</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">Laptops, monitors, printers, and accessories.</p>
+                    <p class="text-sm text-slate-500">Laptops, monitors, printers.</p>
                 </div>
-                
-                <!-- Card 2 -->
-                <div onclick="startRequest('Software & Access')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition duration-300 cursor-pointer group">
-                    <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">🔐</div>
+                <div onclick="startRequest('Software & Access')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                    <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🔐</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Software Access</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">App installations, licenses, and permissions.</p>
+                    <p class="text-sm text-slate-500">App installs, licenses.</p>
                 </div>
-
-                <!-- Card 3 -->
-                <div onclick="startRequest('Network & WiFi')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition duration-300 cursor-pointer group">
-                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">🌐</div>
+                <div onclick="startRequest('Network & WiFi')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🌐</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Network</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">WiFi issues, VPN access, and connectivity.</p>
+                    <p class="text-sm text-slate-500">WiFi, VPN access.</p>
                 </div>
-
-                <!-- Card 4 -->
-                <div onclick="startRequest('General Support')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:border-indigo-100 hover:-translate-y-1 transition duration-300 cursor-pointer group">
-                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6 group-hover:scale-110 transition">💬</div>
+                <div onclick="startRequest('General Support')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💬</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">General IT</h3>
-                    <p class="text-sm text-slate-500 leading-relaxed">Password resets, email issues, and other help.</p>
+                    <p class="text-sm text-slate-500">Password resets, email.</p>
                 </div>
             </div>
-
         </div>
 
-        <!-- NEW REQUEST FORM VIEW -->
         <div id="form-view" class="view max-w-3xl mx-auto">
             <button onclick="showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg> Back to Dashboard
+                &larr; Back to Dashboard
             </button>
-            
             <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-                <div class="flex items-center justify-between mb-8 pb-6 border-b border-slate-100">
-                    <div>
-                        <h2 class="text-2xl font-black text-slate-800 mb-1">New Request</h2>
-                        <p class="text-sm text-slate-500 font-semibold">Category: <span id="selected-category" class="text-indigo-600 bg-indigo-50 px-2 py-1 rounded-md ml-1"></span></p>
-                    </div>
-                    <div class="w-12 h-12 bg-slate-50 text-slate-400 rounded-full flex items-center justify-center">📝</div>
-                </div>
-
+                <h2 class="text-2xl font-black text-slate-800 mb-8 pb-6 border-b border-slate-100">New Request: <span id="selected-category" class="text-indigo-600"></span></h2>
                 <form onsubmit="submitTicket(event)" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-600 mb-2">Full Name</label>
-                            <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium text-slate-800 transition" placeholder="John Doe" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-600 mb-2">Department</label>
-                            <input type="text" id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium text-slate-800 transition" placeholder="e.g. Marketing" required>
-                        </div>
+                        <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Full Name" required>
+                        <input type="text" id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Department" required>
+                        <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Mobile Number" required>
+                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Employee ID" required>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div>
-                            <label class="block text-sm font-bold text-slate-600 mb-2">Mobile Number</label>
-                            <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium text-slate-800 transition" placeholder="(555) 000-0000" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-bold text-slate-600 mb-2">Employee ID</label>
-                            <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium text-slate-800 transition" placeholder="EMP-123" required>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-slate-600 mb-2">Issue Description</label>
-                        <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-medium text-slate-800 transition resize-none" placeholder="Please provide specific details about the problem..." required></textarea>
-                    </div>
-
-                    <div class="pt-6">
-                        <button type="submit" class="w-full md:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-10 py-4 rounded-xl shadow-lg shadow-indigo-200 hover:-translate-y-0.5 hover:shadow-xl transition transform">Submit Request</button>
-                    </div>
+                    <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl resize-none" placeholder="Issue Description..." required></textarea>
+                    
+                    <button id="submit-btn" type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition">Submit Request</button>
                 </form>
             </div>
         </div>
 
-        <!-- SUCCESS VIEW -->
-        <div id="success-view" class="view max-w-lg mx-auto mt-10">
-            <div class="bg-white p-12 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100 text-center">
-                <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✨</div>
-                <h2 class="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
-                <p class="text-slate-500 mb-8">Our IT team has received your ticket and will look into it shortly.</p>
-                <div class="bg-slate-50 border border-slate-100 px-6 py-4 rounded-2xl mb-8 inline-block">
-                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Ticket ID</p>
-                    <p id="success-id" class="text-3xl font-black text-indigo-600"></p>
-                </div>
-                <button onclick="showHome()" class="block w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition shadow-lg">Return to Dashboard</button>
-            </div>
+        <div id="success-view" class="view max-w-lg mx-auto mt-10 text-center bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
+            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✨</div>
+            <h2 class="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
+            <p class="text-slate-500 mb-8">Ticket ID: <span id="success-id" class="font-black text-indigo-600 text-xl ml-2"></span></p>
+            <button onclick="showHome()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition">Return to Dashboard</button>
         </div>
-
     </main>
 
     <script>
-        // 1. SUPABASE CONNECTION GOES AT THE VERY TOP
+        // Supabase Connection using the keys you provided
         const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU'; // Paste the full 130+ character key here!
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU'; 
         const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         let currentCategory = "";
 
-        // 2. Navigation Functions
         function switchView(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
@@ -165,7 +115,6 @@
             currentCategory = category;
             document.getElementById('selected-category').innerText = category;
             
-            // Auto-fill previously used name/details from local storage for convenience
             const lastUser = JSON.parse(localStorage.getItem('last_user_details'));
             if(lastUser) {
                 document.getElementById('t-name').value = lastUser.name || '';
@@ -177,11 +126,9 @@
             switchView('form-view');
         }
 
-        // 3. NEW CLOUD SUBMIT FUNCTION
         async function submitTicket(e) {
-            e.preventDefault(); // Prevent page reload
-            
-            const btn = document.querySelector('button[type="submit"]');
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
             btn.innerText = "Saving to cloud...";
             btn.disabled = true;
 
@@ -200,17 +147,15 @@
                 engineer: 'Unassigned'
             };
 
-            // Send to Supabase
             const { data, error } = await supabase.from('tickets').insert([newTicket]);
 
             if(error) {
-                alert("Error saving ticket to cloud: " + error.message);
+                alert("Error saving ticket: " + error.message);
                 btn.innerText = "Submit Request";
                 btn.disabled = false;
                 return;
             }
 
-            // Save user details locally for next time
             localStorage.setItem('last_user_details', JSON.stringify({
                 name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
             }));
@@ -222,7 +167,6 @@
             btn.disabled = false;
         }
 
-        // 4. Initialize dashboard on load
         window.onload = showHome;
     </script>
 </body>
