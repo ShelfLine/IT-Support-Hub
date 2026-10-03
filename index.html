@@ -17,7 +17,7 @@
 
     <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="showHome()">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="window.showHome()">
                 <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-xl flex items-center justify-center font-black text-lg shadow-sm">IT</div>
                 <h1 class="text-xl font-bold tracking-tight text-slate-900">Support Hub</h1>
             </div>
@@ -38,27 +38,27 @@
                 </div>
                 <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl max-w-sm w-full shadow-sm text-center md:text-left">
                     <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-1">System Status</p>
-                    <p id="system-status" class="text-sm font-bold text-emerald-600">All systems operational.</p>
+                    <p class="text-sm font-bold text-emerald-600">All systems operational.</p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                <div onclick="startRequest('Hardware & Devices')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                <div onclick="window.startRequest('Hardware & Devices')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
                     <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💻</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Hardware</h3>
                     <p class="text-sm text-slate-500">Laptops, monitors, printers.</p>
                 </div>
-                <div onclick="startRequest('Software & Access')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                <div onclick="window.startRequest('Software & Access')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
                     <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🔐</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Software Access</h3>
                     <p class="text-sm text-slate-500">App installs, licenses.</p>
                 </div>
-                <div onclick="startRequest('Network & WiFi')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                <div onclick="window.startRequest('Network & WiFi')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
                     <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🌐</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">Network</h3>
                     <p class="text-sm text-slate-500">WiFi, VPN access.</p>
                 </div>
-                <div onclick="startRequest('General Support')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
+                <div onclick="window.startRequest('General Support')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
                     <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💬</div>
                     <h3 class="text-lg font-bold text-slate-800 mb-2">General IT</h3>
                     <p class="text-sm text-slate-500">Password resets, email.</p>
@@ -67,12 +67,12 @@
         </div>
 
         <div id="form-view" class="view max-w-3xl mx-auto">
-            <button onclick="showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
+            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
                 &larr; Back to Dashboard
             </button>
             <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
                 <h2 class="text-2xl font-black text-slate-800 mb-8 pb-6 border-b border-slate-100">New Request: <span id="selected-category" class="text-indigo-600"></span></h2>
-                <form onsubmit="submitTicket(event)" class="space-y-6">
+                <form onsubmit="window.submitTicket(event)" class="space-y-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Full Name" required>
                         <input type="text" id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl" placeholder="Department" required>
@@ -90,56 +90,58 @@
             <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✨</div>
             <h2 class="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
             <p class="text-slate-500 mb-8">Ticket ID: <span id="success-id" class="font-black text-indigo-600 text-xl ml-2"></span></p>
-            <button onclick="showHome()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition">Return to Dashboard</button>
+            <button onclick="window.showHome()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition">Return to Dashboard</button>
         </div>
     </main>
 
     <script>
-        // --- 🚨 PASTE YOUR KEYS HERE EXACTLY AS SHOWN 🚨 ---
-        // Ensure there are NO line breaks inside the single quotes!
         const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU'; 
         
-        let supabase;
+        let supabaseClient;
         try {
-            if(SUPABASE_URL !== 'PASTE_URL_HERE' && SUPABASE_KEY !== 'PASTE_KEY_HERE') {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            }
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            console.log("Database connected successfully!");
         } catch(e) {
-            console.error("Supabase Initialization Error:", e);
+            console.error("Database connection failed:", e);
         }
 
         let currentCategory = "";
 
-        function switchView(viewId) {
+        window.switchView = function(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
-        }
+        };
 
-        function showHome() {
-            switchView('home-view');
-        }
+        window.showHome = function() {
+            window.switchView('home-view');
+        };
 
-        function startRequest(category) {
+        window.startRequest = function(category) {
             currentCategory = category;
             document.getElementById('selected-category').innerText = category;
             
-            const lastUser = JSON.parse(localStorage.getItem('last_user_details'));
-            if(lastUser) {
-                document.getElementById('t-name').value = lastUser.name || '';
-                document.getElementById('t-dept').value = lastUser.dept || '';
-                document.getElementById('t-mobile').value = lastUser.mobile || '';
-                document.getElementById('t-empid').value = lastUser.empid || '';
+            try {
+                const lastUser = JSON.parse(localStorage.getItem('last_user_details'));
+                if(lastUser) {
+                    document.getElementById('t-name').value = lastUser.name || '';
+                    document.getElementById('t-dept').value = lastUser.dept || '';
+                    document.getElementById('t-mobile').value = lastUser.mobile || '';
+                    document.getElementById('t-empid').value = lastUser.empid || '';
+                }
+            } catch(e) {
+                console.log("No saved user data found.");
             }
+            
             document.getElementById('t-desc').value = '';
-            switchView('form-view');
-        }
+            window.switchView('form-view');
+        };
 
-        async function submitTicket(e) {
+        window.submitTicket = async function(e) {
             e.preventDefault();
             
-            if(!supabase) {
-                alert("Database connection is missing. Please check your Supabase Keys in the code.");
+            if(!supabaseClient) {
+                alert("Database connection is missing.");
                 return;
             }
 
@@ -162,27 +164,25 @@
                 engineer: 'Unassigned'
             };
 
-            const { data, error } = await supabase.from('tickets').insert([newTicket]);
+            try {
+                const { data, error } = await supabaseClient.from('tickets').insert([newTicket]);
+                if(error) throw error;
 
-            if(error) {
+                localStorage.setItem('last_user_details', JSON.stringify({
+                    name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
+                }));
+
+                document.getElementById('success-id').innerText = ticketId;
+                window.switchView('success-view');
+            } catch(error) {
                 alert("Error saving ticket: " + error.message);
-                btn.innerText = "Submit Request";
-                btn.disabled = false;
-                return;
             }
-
-            localStorage.setItem('last_user_details', JSON.stringify({
-                name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
-            }));
-
-            document.getElementById('success-id').innerText = ticketId;
-            switchView('success-view');
             
             btn.innerText = "Submit Request";
             btn.disabled = false;
-        }
+        };
 
-        window.onload = showHome;
+        window.onload = window.showHome;
     </script>
 </body>
 </html>
