@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .view { display: none; opacity: 0; transition: opacity 0.4s ease; }
+        .view.active { display: flex; opacity: 1; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 h-screen overflow-hidden">
+
+    <!-- LOGIN VIEW -->
+    <div id="login-view" class="view active items-center justify-center h-screen w-full bg-white">
+        <div class="max-w-md w-full p-10 text-center">
+            <div class="w-20 h-20 bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-8 shadow-xl shadow-indigo-200">IT</div>
+            <h2 class="text-3xl font-black mb-2 tracking-tight">Admin Portal</h2>
+            <p class="text-slate-500 mb-10">Sign in to manage service requests.</p>
+            <input type="password" id="admin-pwd" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl mb-4 font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-lg" placeholder="••••••••">
+            <button onclick="loginAdmin()" class="w-full bg-slate-900 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-lg hover:-translate-y-0.5 transform">Authenticate</button>
+            <p id="login-err" class="text-red-500 text-sm mt-4 font-bold hidden">Invalid credentials.</p>
+            <div class="mt-10"><a href="index.html" class="text-slate-400 font-semibold hover:text-slate-800 transition">&larr; Back to User Site</a></div>
+        </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div id="dashboard-view" class="view h-screen w-full flex">
+        
+        <!-- SIDEBAR -->
+        <aside class="w-64 bg-white border-r border-slate-200 flex flex-col z-20">
+            <div class="h-20 flex items-center px-8 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-8 h-8 bg-indigo-600 text-white rounded-lg flex items-center justify-center font-bold text-sm shadow-md">IT</div>
+                    <span class="text-lg font-black tracking-tight">Workspace</span>
+                </div>
+            </div>
+            
+            <div class="flex-1 px-4 py-6 space-y-1">
+                <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Menu</p>
+                <button id="nav-dashboard" onclick="switchMenu('dashboard')" class="w-full flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-bold transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
+                    Dashboard
+                </button>
+                <button id="nav-tickets" onclick="switchMenu('tickets')" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl font-semibold transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                    All Tickets
+                </button>
+                <button id="nav-team" onclick="switchMenu('team')" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl font-semibold transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    Team
+                </button>
+            </div>
+
+            <div class="p-4 border-t border-slate-100">
+                <button onclick="logoutAdmin()" class="w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-red-50 hover:text-red-600 rounded-xl font-semibold transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col h-screen overflow-hidden">
+            
+            <!-- HEADER -->
+            <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-8 z-10 shadow-sm">
+                <h1 id="header-title" class="text-2xl font-black tracking-tight">Overview</h1>
+                <div class="flex items-center gap-6">
+                    <div class="relative hidden md:block">
+                        <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                        <input type="text" oninput="searchTable(this.value)" placeholder="Search tickets..." class="bg-slate-50 border border-slate-200 rounded-full pl-10 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 w-64 transition">
+                    </div>
+                    <div class="w-10 h-10 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center font-bold border border-indigo-200 shadow-sm">AD</div>
+                </div>
+            </header>
+
+            <!-- SCROLLABLE PAGE AREA -->
+            <div class="flex-1 overflow-y-auto p-8">
+                
+                <!-- METRICS GRID (Visible on Dashboard) -->
+                <div id="metrics-section" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between h-36">
+                        <div class="flex justify-between items-start">
+                            <p class="text-sm font-bold text-slate-500">Total Requests</p>
+                            <span class="bg-indigo-50 text-indigo-600 px-2 py-1 rounded-md text-xs font-bold">All</span>
+                        </div>
+                        <h3 class="text-4xl font-black text-slate-800" id="stat-total">0</h3>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between h-36 relative overflow-hidden">
+                        <div class="flex justify-between items-start z-10">
+                            <p class="text-sm font-bold text-slate-500">Needs Attention</p>
+                            <span class="bg-amber-50 text-amber-600 px-2 py-1 rounded-md text-xs font-bold">Priority</span>
+                        </div>
+                        <h3 class="text-4xl font-black text-amber-500 z-10" id="stat-open">0</h3>
+                        <div class="absolute bottom-0 left-0 right-0 h-12 flex items-end gap-1 px-4 opacity-40">
+                            <div class="w-full bg-amber-100 rounded-t-sm" style="height: 30%"></div>
+                            <div class="w-full bg-amber-200 rounded-t-sm" style="height: 50%"></div>
+                            <div class="w-full bg-amber-300 rounded-t-sm" style="height: 90%"></div>
+                            <div class="w-full bg-amber-200 rounded-t-sm" style="height: 60%"></div>
+                            <div class="w-full bg-amber-400 rounded-t-sm" style="height: 100%"></div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between h-36 relative overflow-hidden">
+                        <div class="flex justify-between items-start z-10">
+                            <p class="text-sm font-bold text-slate-500">Resolved</p>
+                            <span class="bg-emerald-50 text-emerald-600 px-2 py-1 rounded-md text-xs font-bold">Done</span>
+                        </div>
+                        <h3 class="text-4xl font-black text-emerald-500 z-10" id="stat-resolved">0</h3>
+                        <div class="absolute bottom-0 left-0 right-0 h-12 flex items-end gap-1 px-4 opacity-40">
+                            <div class="w-full bg-emerald-100 rounded-t-sm" style="height: 20%"></div>
+                            <div class="w-full bg-emerald-200 rounded-t-sm" style="height: 40%"></div>
+                            <div class="w-full bg-emerald-300 rounded-t-sm" style="height: 60%"></div>
+                            <div class="w-full bg-emerald-400 rounded-t-sm" style="height: 80%"></div>
+                            <div class="w-full bg-emerald-500 rounded-t-sm" style="height: 100%"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TABLE SECTION (Visible on Dashboard & All Tickets) -->
+                <div id="tickets-section" class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-10">
+                    <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
+                        <h2 class="text-lg font-black text-slate-800">Support Queue</h2>
+                        <button onclick="exportCSV()" class="flex items-center gap-2 text-sm font-bold text-indigo-600 hover:text-indigo-800 transition bg-indigo-50 px-4 py-2 rounded-lg">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                            Export CSV
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="text-xs font-bold text-slate-400 uppercase tracking-wider bg-slate-50/50 border-b border-slate-100">
+                                    <th class="p-6">Employee</th>
+                                    <th class="p-6">Request Details</th>
+                                    <th class="p-6">Date</th>
+                                    <th class="p-6">Status</th>
+                                    <th class="p-6">Assignee</th>
+                                    <th class="p-6 text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-table-body" class="divide-y divide-slate-100">
+                                <!-- Tickets injected here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TEAM SECTION (Visible on Team Tab) -->
+                <div id="team-section" style="display: none;">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-5">
+                            <div class="w-16 h-16 bg-indigo-100 text-indigo-700 rounded-full flex items-center justify-center text-xl font-bold">AD</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-lg">Admin User</h3>
+                                <p class="text-sm font-semibold text-slate-500">IT Director</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex items-center gap-5">
+                            <div class="w-16 h-16 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl font-bold">SJ</div>
+                            <div>
+                                <h3 class="font-bold text-slate-800 text-lg">Sarah Jenkins</h3>
+                                <p class="text-sm font-semibold text-slate-500">Tier 2 Support</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-center items-center gap-2 border-dashed cursor-pointer hover:bg-slate-50 transition">
+                            <div class="w-10 h-10 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center font-bold text-xl">+</div>
+                            <p class="font-bold text-slate-500">Add Team Member</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let tickets = [];
+        let searchQuery = "";
+
+        // Login Logic
+        document.getElementById('admin-pwd').addEventListener('keypress', e => { if (e.key === 'Enter') loginAdmin(); });
+        window.onload = () => { if (sessionStorage.getItem('admin_logged_in') === 'true') showDashboard(); };
+
+        function loginAdmin() {
+            if(document.getElementById('admin-pwd').value === 'admin123') {
+                sessionStorage.setItem('admin_logged_in', 'true');
+                showDashboard();
+            } else {
+                document.getElementById('login-err').classList.remove('hidden');
+            }
+        }
+        function showDashboard() {
+            document.getElementById('login-view').classList.remove('active');
+            document.getElementById('dashboard-view').classList.add('active');
+            loadTickets();
+        }
+        function logoutAdmin() {
+            sessionStorage.removeItem('admin_logged_in');
+            window.location.reload();
+        }
+
+        // Menu Navigation Logic
+        function switchMenu(page) {
+            const activeClass = "w-full flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-bold transition";
+            const inactiveClass = "w-full flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 hover:text-slate-800 rounded-xl font-semibold transition";
+
+            document.getElementById('nav-dashboard').className = (page === 'dashboard') ? activeClass : inactiveClass;
+            document.getElementById('nav-tickets').className = (page === 'tickets') ? activeClass : inactiveClass;
+            document.getElementById('nav-team').className = (page === 'team') ? activeClass : inactiveClass;
+
+            document.getElementById('metrics-section').style.display = (page === 'dashboard') ? 'grid' : 'none';
+            document.getElementById('tickets-section').style.display = (page === 'dashboard' || page === 'tickets') ? 'block' : 'none';
+            document.getElementById('team-section').style.display = (page === 'team') ? 'block' : 'none';
+            
+            const titles = { 'dashboard': 'Overview', 'tickets': 'All Tickets Directory', 'team': 'IT Team Members' };
+            document.getElementById('header-title').innerText = titles[page];
+        }
+
+        function loadTickets() {
+            tickets = JSON.parse(localStorage.getItem('enterprise_tickets')) || [];
+            
+            document.getElementById('stat-total').innerText = tickets.length;
+            document.getElementById('stat-open').innerText = tickets.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+            document.getElementById('stat-resolved').innerText = tickets.filter(t => t.status === 'Resolved').length;
+
+            renderTable();
+        }
+
+        function searchTable(query) {
+            searchQuery = query.toLowerCase();
+            renderTable();
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('admin-table-body');
+            tbody.innerHTML = '';
+            let displayCount = 0;
+            
+            if(tickets.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-slate-400 font-bold text-lg">Queue is empty. Great job!</td></tr>`;
+                return;
+            }
+
+            tickets.forEach((t, index) => {
+                if (searchQuery && !t.name.toLowerCase().includes(searchQuery) && !t.desc.toLowerCase().includes(searchQuery) && !t.id.toLowerCase().includes(searchQuery)) return;
+                displayCount++;
+
+                const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                
+                let sColor = '';
+                if(t.status === 'Resolved') sColor = 'bg-emerald-50 text-emerald-600 border border-emerald-200';
+                else if(t.status === 'Pending') sColor = 'bg-amber-50 text-amber-600 border border-amber-200';
+                else sColor = 'bg-indigo-50 text-indigo-600 border border-indigo-200';
+                
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/80 transition group bg-white">
+                        <td class="p-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-500 border border-slate-200">${initials}</div>
+                                <div>
+                                    <p class="font-bold text-slate-800">${t.name}</p>
+                                    <p class="text-xs font-semibold text-slate-500">${t.dept} &bull; ${t.empid}</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-6">
+                            <p class="font-bold text-slate-700 text-sm mb-1">${t.id} &bull; ${t.category}</p>
+                            <p class="text-sm text-slate-500 truncate w-48" title="${t.desc}">${t.desc}</p>
+                        </td>
+                        <td class="p-6">
+                            <span class="text-sm font-semibold text-slate-600">${t.date}</span>
+                        </td>
+                        <td class="p-6">
+                            <select onchange="updateStatus(${index}, this.value)" class="${sColor} px-3 py-1.5 rounded-full font-bold text-xs uppercase tracking-wider cursor-pointer focus:outline-none transition">
+                                <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
+                                <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                            </select>
+                        </td>
+                        <td class="p-6">
+                            <input type="text" value="${t.engineer === 'Unassigned' ? '' : t.engineer}" placeholder="Assignee..." 
+                                onblur="assignEngineer(${index}, this.value)" class="bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-500 p-1 w-28 text-sm font-bold text-slate-700 focus:outline-none transition placeholder:text-slate-300">
+                        </td>
+                        <td class="p-6 text-right">
+                            <button onclick="deleteTicket(${index})" title="Delete Ticket" class="text-slate-300 hover:text-red-500 font-bold transition p-2 rounded-lg hover:bg-red-50 inline-flex items-center justify-center">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            if(displayCount === 0 && tickets.length > 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-16 text-center text-slate-400 font-bold text-lg">No tickets match your search.</td></tr>`;
+            }
+        }
+
+        function updateStatus(index, newStatus) {
+            tickets[index].status = newStatus;
+            localStorage.setItem('enterprise_tickets', JSON.stringify(tickets));
+            loadTickets(); 
+        }
+
+        function assignEngineer(index, engName) {
+            tickets[index].engineer = engName.trim() || 'Unassigned';
+            localStorage.setItem('enterprise_tickets', JSON.stringify(tickets));
+            loadTickets();
+        }
+
+        function deleteTicket(index) {
+            if(confirm('Are you sure you want to delete this ticket? This cannot be undone.')) {
+                tickets.splice(index, 1);
+                localStorage.setItem('enterprise_tickets', JSON.stringify(tickets));
+                loadTickets();
+            }
+        }
+
+        // Export to CSV Logic
+        function exportCSV() {
+            if(tickets.length === 0) return alert("No tickets to export.");
+            
+            let csvContent = "data:text/csv;charset=utf-8,";
+            // Column Headers
+            csvContent += "Ticket ID,Date,Name,Department,Employee ID,Mobile,Category,Status,Assigned Engineer,Description\n";
+            
+            tickets.forEach(t => {
+                // Remove commas and newlines from text fields to prevent CSV breaking
+                let safeDesc = t.desc.replace(/,/g, " ").replace(/\n/g, " ");
+                let row = `${t.id},${t.date},${t.name},${t.dept},${t.empid},${t.mobile},${t.category},${t.status},${t.engineer},${safeDesc}`;
+                csvContent += row + "\n";
+            });
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "it_tickets_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    </script>
+</body>
+</html>
