@@ -18,14 +18,19 @@
 </head>
 <body class="bg-[#F8FAFC] text-slate-800 h-screen overflow-hidden">
 
-    <!-- LOGIN VIEW -->
+    <!-- SECURE LOGIN VIEW -->
     <div id="login-view" class="view active items-center justify-center h-screen w-full bg-white px-4">
         <div class="max-w-md w-full p-8 md:p-10 text-center">
             <div class="w-20 h-20 bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-2xl flex items-center justify-center text-3xl font-black mx-auto mb-8 shadow-xl shadow-indigo-200">IT</div>
             <h2 class="text-3xl font-black mb-2 tracking-tight">Admin Portal</h2>
-            <p class="text-slate-500 mb-10">Sign in to manage service requests.</p>
-            <input type="password" id="admin-pwd" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl mb-4 font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-lg" placeholder="••••••••">
-            <button onclick="window.loginAdmin()" class="w-full bg-slate-900 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-lg hover:-translate-y-0.5 transform">Authenticate</button>
+            <p class="text-slate-500 mb-10">Sign in securely to manage service requests.</p>
+            
+            <form onsubmit="window.loginAdmin(event)" class="space-y-4">
+                <input type="email" id="admin-email" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-lg" placeholder="admin@company.com" required>
+                <input type="password" id="admin-pwd" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-indigo-500 transition text-lg" placeholder="••••••••" required>
+                <button id="login-btn" type="submit" class="w-full bg-slate-900 text-white px-6 py-4 rounded-xl font-bold text-lg hover:bg-slate-800 transition shadow-lg hover:-translate-y-0.5 transform">Authenticate</button>
+            </form>
+            
             <p id="login-err" class="text-red-500 text-sm mt-4 font-bold hidden">Invalid credentials.</p>
             <div class="mt-10"><a href="index.html" class="text-slate-400 font-semibold hover:text-slate-800 transition">&larr; Back to User Site</a></div>
         </div>
@@ -37,7 +42,6 @@
     <!-- DASHBOARD VIEW -->
     <div id="dashboard-view" class="view h-screen w-full flex relative overflow-hidden">
         
-        <!-- RESPONSIVE SIDEBAR -->
         <aside id="sidebar" class="w-64 bg-white border-r border-slate-200 flex flex-col z-50 absolute inset-y-0 left-0 transform -translate-x-full md:relative md:translate-x-0 transition duration-300 ease-in-out h-full shadow-2xl md:shadow-none">
             <button onclick="window.toggleSidebar()" class="md:hidden absolute top-6 right-6 text-slate-400 hover:text-slate-700 font-black text-xl">&times;</button>
             <div class="h-20 flex items-center px-8 border-b border-slate-100">
@@ -59,10 +63,7 @@
             </div>
         </aside>
 
-        <!-- MAIN CONTENT -->
         <main class="flex-1 flex flex-col h-screen w-full overflow-hidden relative">
-            
-            <!-- RESPONSIVE HEADER -->
             <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-8 z-10 shadow-sm flex-shrink-0">
                 <div class="flex items-center gap-3">
                     <button onclick="window.toggleSidebar()" class="md:hidden text-slate-500 hover:text-indigo-600 focus:outline-none bg-slate-50 p-2 rounded-lg">
@@ -75,7 +76,6 @@
 
             <div class="flex-1 overflow-y-auto p-4 md:p-8 w-full">
                 
-                <!-- RESPONSIVE METRICS -->
                 <div id="metrics-section" class="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6 mb-8">
                     <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between h-32 md:h-36">
                         <p class="text-sm font-bold text-slate-500">Total Requests</p>
@@ -91,12 +91,10 @@
                     </div>
                 </div>
 
-                <!-- RESPONSIVE TABLE CONTAINER -->
                 <div id="tickets-section" class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-10 w-full">
                     <div class="px-6 py-4 md:px-8 md:py-6 border-b border-slate-100 flex justify-between items-center bg-white">
                         <h2 class="text-lg font-black text-slate-800">Support Queue</h2>
                     </div>
-                    <!-- This div enables horizontal scrolling on phones -->
                     <div class="overflow-x-auto w-full">
                         <table class="w-full text-left border-collapse min-w-[900px]">
                             <thead>
@@ -130,7 +128,6 @@
         window.tickets = [];
         window.searchQuery = "";
 
-        // --- NEW: MOBILE SIDEBAR TOGGLE ---
         window.toggleSidebar = function() {
             const sidebar = document.getElementById('sidebar');
             const overlay = document.getElementById('mobile-overlay');
@@ -138,20 +135,38 @@
             overlay.classList.toggle('hidden');
         };
 
-        document.getElementById('admin-pwd').addEventListener('keypress', e => { 
-            if (e.key === 'Enter') window.loginAdmin(); 
-        });
-
-        window.onload = () => { 
-            if (sessionStorage.getItem('admin_logged_in') === 'true') { window.showDashboard(); }
+        // --- NEW SECURE AUTH FLOW ---
+        window.onload = async () => { 
+            // Check if user is already logged in securely via Supabase session
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session) {
+                window.showDashboard();
+            }
         };
 
-        window.loginAdmin = function() {
-            if(document.getElementById('admin-pwd').value === 'admin123') {
-                sessionStorage.setItem('admin_logged_in', 'true');
-                window.showDashboard();
+        window.loginAdmin = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('login-btn');
+            const errDiv = document.getElementById('login-err');
+            const email = document.getElementById('admin-email').value.trim();
+            const password = document.getElementById('admin-pwd').value;
+
+            btn.innerText = "Authenticating...";
+            btn.disabled = true;
+            errDiv.classList.add('hidden');
+
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+                email: email,
+                password: password,
+            });
+
+            if (error) {
+                errDiv.innerText = error.message;
+                errDiv.classList.remove('hidden');
+                btn.innerText = "Authenticate";
+                btn.disabled = false;
             } else {
-                document.getElementById('login-err').classList.remove('hidden');
+                window.showDashboard();
             }
         };
         
@@ -161,10 +176,11 @@
             window.loadTickets();
         };
         
-        window.logoutAdmin = function() {
-            sessionStorage.removeItem('admin_logged_in');
+        window.logoutAdmin = async function() {
+            await supabaseClient.auth.signOut();
             window.location.reload();
         };
+        // ------------------------------
 
         window.switchMenu = function(page) {};
 
@@ -288,7 +304,7 @@
                 }, 2000);
                 
             } catch (e) { 
-                alert("Database Error: " + e.message + "\n\nDid you create the 'solution' column in Supabase?");
+                alert("Database Error: " + e.message);
                 btn.innerText = "Error!";
             }
         };
