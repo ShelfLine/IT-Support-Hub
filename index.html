@@ -94,7 +94,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Full Name" required>
                         
-                        <!-- NEW DEPARTMENT DROPDOWN -->
+                        <!-- UPDATED DEPARTMENT DROPDOWN -->
                         <select id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer" required>
                             <option value="" disabled selected>Select Department...</option>
                             <option value="Human Resources">Human Resources</option>
@@ -102,7 +102,7 @@
                             <option value="Accounting">Accounting</option>
                             <option value="Information Technology">Information Technology</option>
                             <option value="Design">Design</option>
-                            <option value="Saftey">Safety</option>
+                            <option value="Safety">Safety</option>
                             <option value="Civil">Civil</option>
                             <option value="Survey">Survey</option>
                             <option value="P&M">P&M</option>
@@ -118,7 +118,16 @@
                         </select>
 
                         <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Mobile Number" required>
-                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Employee ID" required>
+                        
+                        <select id="t-priority" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer" required>
+                            <option value="" disabled selected>Select Urgency...</option>
+                            <option value="Low">Low (General Inquiry / Request)</option>
+                            <option value="Normal">Normal (Standard Issue)</option>
+                            <option value="High">High (Work is Blocked)</option>
+                            <option value="Critical">Critical (System Down / VIP)</option>
+                        </select>
+
+                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition md:col-span-2" placeholder="Employee ID" required>
                     </div>
                     <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Issue Description..." required></textarea>
                     
@@ -185,6 +194,13 @@
                     if(data.status === 'Resolved') statusColor = 'text-emerald-600 bg-emerald-100';
                     if(data.status === 'Pending') statusColor = 'text-amber-600 bg-amber-100';
 
+                    let priorityBadge = '';
+                    if(data.priority) {
+                        let pColor = data.priority === 'Critical' ? 'text-red-600 bg-red-100' : (data.priority === 'High' ? 'text-orange-600 bg-orange-100' : 'text-blue-600 bg-blue-100');
+                        if (data.priority === 'Low') pColor = 'text-slate-600 bg-slate-200';
+                        priorityBadge = `<span class="${pColor} px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ml-2">${data.priority}</span>`;
+                    }
+
                     let solutionHtml = '';
                     if(data.solution && data.solution.trim() !== '') {
                         solutionHtml = `
@@ -198,7 +214,7 @@
                     resultDiv.innerHTML = `
                         <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Live Status</p>
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-black text-slate-800">${data.id}</h3>
+                            <h3 class="text-xl font-black text-slate-800">${data.id} ${priorityBadge}</h3>
                             <span class="${statusColor} px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">${data.status}</span>
                         </div>
                         <div class="space-y-2 border-t border-slate-200 pt-4">
@@ -229,7 +245,6 @@
                     document.getElementById('t-mobile').value = lastUser.mobile || '';
                     document.getElementById('t-empid').value = lastUser.empid || '';
                     
-                    // Safely set the dropdown if it matches an option
                     if (lastUser.dept) {
                         const deptSelect = document.getElementById('t-dept');
                         const options = Array.from(deptSelect.options).map(opt => opt.value);
@@ -241,6 +256,7 @@
             } catch(e) {}
             
             document.getElementById('t-desc').value = '';
+            document.getElementById('t-priority').value = '';
             window.switchView('form-view');
         };
 
@@ -263,6 +279,7 @@
                 mobile: document.getElementById('t-mobile').value,
                 empid: document.getElementById('t-empid').value,
                 category: currentCategory,
+                priority: document.getElementById('t-priority').value,
                 description: document.getElementById('t-desc').value,
                 status: 'Open',
                 engineer: 'Unassigned',
@@ -273,7 +290,6 @@
                 const { error } = await supabaseClient.from('tickets').insert([newTicket]);
                 if(error) throw error;
 
-                // Save for next time
                 localStorage.setItem('last_user_details', JSON.stringify({
                     name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
                 }));
