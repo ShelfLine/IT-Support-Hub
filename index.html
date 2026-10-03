@@ -144,9 +144,14 @@
     </main>
 
     <script>
+        // 1. SUPABASE CONNECTION GOES AT THE VERY TOP
+        const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU'; // Paste the full 130+ character key here!
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
         let currentCategory = "";
 
-        // Navigation
+        // 2. Navigation Functions
         function switchView(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
@@ -168,14 +173,18 @@
                 document.getElementById('t-mobile').value = lastUser.mobile || '';
                 document.getElementById('t-empid').value = lastUser.empid || '';
             }
-            
             document.getElementById('t-desc').value = '';
             switchView('form-view');
         }
 
-        function submitTicket(e) {
+        // 3. NEW CLOUD SUBMIT FUNCTION
+        async function submitTicket(e) {
             e.preventDefault(); // Prevent page reload
             
+            const btn = document.querySelector('button[type="submit"]');
+            btn.innerText = "Saving to cloud...";
+            btn.disabled = true;
+
             const ticketId = 'TKT-' + Math.floor(1000 + Math.random() * 9000);
             
             const newTicket = {
@@ -186,30 +195,35 @@
                 mobile: document.getElementById('t-mobile').value,
                 empid: document.getElementById('t-empid').value,
                 category: currentCategory,
-                desc: document.getElementById('t-desc').value,
+                description: document.getElementById('t-desc').value,
                 status: 'Open',
                 engineer: 'Unassigned'
             };
 
-            // Save ticket
-            let tickets = JSON.parse(localStorage.getItem('enterprise_tickets')) || [];
-            tickets.unshift(newTicket);
-            localStorage.setItem('enterprise_tickets', JSON.stringify(tickets));
+            // Send to Supabase
+            const { data, error } = await supabase.from('tickets').insert([newTicket]);
 
-            // Save user details for next time
+            if(error) {
+                alert("Error saving ticket to cloud: " + error.message);
+                btn.innerText = "Submit Request";
+                btn.disabled = false;
+                return;
+            }
+
+            // Save user details locally for next time
             localStorage.setItem('last_user_details', JSON.stringify({
                 name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
             }));
 
             document.getElementById('success-id').innerText = ticketId;
             switchView('success-view');
+            
+            btn.innerText = "Submit Request";
+            btn.disabled = false;
         }
 
-        // Initialize dashboard on load
+        // 4. Initialize dashboard on load
         window.onload = showHome;
-        const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU';
     </script>
-
 </body>
 </html>
