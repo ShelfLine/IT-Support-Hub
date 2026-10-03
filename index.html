@@ -19,10 +19,12 @@
         <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="window.showHome()">
                 <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-xl flex items-center justify-center font-black text-lg shadow-sm">IT</div>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900">Support Hub</h1>
+                <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">Support Hub</h1>
             </div>
-            <div class="flex items-center gap-6">
-                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-indigo-600 transition">Admin Portal</a>
+            <div class="flex items-center gap-4 sm:gap-6">
+                <!-- NEW TRACK TICKET BUTTON -->
+                <button onclick="window.switchView('track-view')" class="text-sm font-black text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-4 py-2 rounded-lg transition shadow-sm">Track Ticket</button>
+                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition hidden sm:block">Admin Portal</a>
                 <div class="w-10 h-10 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold">ME</div>
             </div>
         </div>
@@ -30,6 +32,7 @@
 
     <main class="max-w-6xl mx-auto px-6 py-10">
         
+        <!-- DASHBOARD VIEW -->
         <div id="home-view" class="view active">
             <div class="mb-12 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
@@ -66,6 +69,27 @@
             </div>
         </div>
 
+        <!-- TICKET TRACKER VIEW -->
+        <div id="track-view" class="view max-w-xl mx-auto">
+            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
+                &larr; Back to Dashboard
+            </button>
+            <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
+                <h2 class="text-2xl font-black text-slate-800 mb-2">Track Your Ticket</h2>
+                <p class="text-slate-500 mb-8">Enter your TKT number below to check its live status.</p>
+                
+                <form onsubmit="window.checkTicketStatus(event)" class="space-y-4">
+                    <input type="text" id="track-id" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold text-lg uppercase tracking-wider text-center focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. TKT-1234" required>
+                    <button id="track-btn" type="submit" class="w-full bg-slate-900 text-white font-bold px-10 py-4 rounded-xl hover:bg-slate-800 transition shadow-lg">Check Status</button>
+                </form>
+
+                <div id="track-result" class="mt-8 hidden">
+                    <!-- Status results injected here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW REQUEST FORM VIEW -->
         <div id="form-view" class="view max-w-3xl mx-auto">
             <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
                 &larr; Back to Dashboard
@@ -86,6 +110,7 @@
             </div>
         </div>
 
+        <!-- SUCCESS VIEW -->
         <div id="success-view" class="view max-w-lg mx-auto mt-10 text-center bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
             <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✨</div>
             <h2 class="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
@@ -101,7 +126,6 @@
         let supabaseClient;
         try {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log("Database connected successfully!");
         } catch(e) {
             console.error("Database connection failed:", e);
         }
@@ -110,11 +134,79 @@
 
         window.switchView = function(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            
+            // Hide search results if navigating away from the track view
+            if(viewId !== 'track-view') {
+                const trackResult = document.getElementById('track-result');
+                if(trackResult) trackResult.classList.add('hidden');
+                document.getElementById('track-id').value = '';
+            }
+
             setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
         };
 
         window.showHome = function() {
             window.switchView('home-view');
+        };
+
+        // --- NEW: TICKET TRACKING LOGIC ---
+        window.checkTicketStatus = async function(e) {
+            e.preventDefault();
+            if(!supabaseClient) return alert("Database connection missing.");
+
+            const btn = document.getElementById('track-btn');
+            const resultDiv = document.getElementById('track-result');
+            let ticketId = document.getElementById('track-id').value.trim().toUpperCase();
+
+            // Auto-format if they forgot the "TKT-" prefix
+            if(!ticketId.startsWith('TKT-') && !isNaN(ticketId)) {
+                ticketId = 'TKT-' + ticketId;
+                document.getElementById('track-id').value = ticketId;
+            }
+
+            btn.innerText = "Searching Cloud...";
+            btn.disabled = true;
+            resultDiv.classList.add('hidden');
+
+            try {
+                // Fetch exactly 1 ticket matching the ID
+                const { data, error } = await supabaseClient
+                    .from('tickets')
+                    .select('*')
+                    .eq('id', ticketId)
+                    .single();
+
+                if (error || !data) {
+                    resultDiv.className = "mt-8 p-6 rounded-2xl border border-red-100 bg-red-50 text-center";
+                    resultDiv.innerHTML = `<p class="text-red-600 font-bold">Ticket not found.</p><p class="text-sm text-red-400 mt-1">Please check the ID and try again.</p>`;
+                } else {
+                    // Decide colors based on status
+                    let statusColor = 'text-indigo-600 bg-indigo-100'; // Open
+                    if(data.status === 'Resolved') statusColor = 'text-emerald-600 bg-emerald-100';
+                    if(data.status === 'Pending') statusColor = 'text-amber-600 bg-amber-100';
+
+                    resultDiv.className = "mt-8 p-6 rounded-2xl border border-slate-100 bg-slate-50 text-left shadow-inner";
+                    resultDiv.innerHTML = `
+                        <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Live Status</p>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-black text-slate-800">${data.id}</h3>
+                            <span class="${statusColor} px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">${data.status}</span>
+                        </div>
+                        <div class="space-y-2 border-t border-slate-200 pt-4">
+                            <p class="text-sm"><span class="font-bold text-slate-700">Request:</span> <span class="text-slate-500">${data.category}</span></p>
+                            <p class="text-sm"><span class="font-bold text-slate-700">Assigned IT:</span> <span class="text-slate-500">${data.engineer || 'Unassigned'}</span></p>
+                            <p class="text-sm"><span class="font-bold text-slate-700">Date Logged:</span> <span class="text-slate-500">${data.date}</span></p>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                resultDiv.className = "mt-8 p-6 rounded-2xl border border-red-100 bg-red-50 text-center";
+                resultDiv.innerHTML = `<p class="text-red-600 font-bold">Search failed. Try again.</p>`;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            btn.innerText = "Check Status";
+            btn.disabled = false;
         };
 
         window.startRequest = function(category) {
