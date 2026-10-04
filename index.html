@@ -2,148 +2,269 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Support Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>IT Support Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        .view { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
-        .view.active { display: block; opacity: 1; animation: slideUp 0.4s ease-out forwards; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- MODERN SOFT-TECH VARIABLES & RESET --- */
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 0% 0%, hsla(199,100%,90%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(225,100%,92%,1) 0, transparent 50%);
+            background-attachment: fixed;
+            color: #0f172a;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .view { display: none; opacity: 0; transition: opacity 0.4s ease-out, transform 0.4s ease-out; transform: translateY(20px); }
+        .view.active { display: block; opacity: 1; transform: translateY(0); }
+        
+        /* Custom Smooth Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* Glass & Shadows */
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+        
+        .soft-shadow {
+            box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05);
+        }
+
+        /* Hover glows for category cards */
+        .category-card:hover .icon-wrapper {
+            transform: scale(1.1) rotate(-5deg);
+        }
+        .icon-wrapper { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
     </style>
 </head>
-<body class="bg-[#F8FAFC] text-slate-800 min-h-screen">
+<body class="min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="window.showHome()">
-                <div class="w-10 h-10 bg-gradient-to-tr from-indigo-600 to-purple-600 text-white rounded-xl flex items-center justify-center font-black text-lg shadow-sm">IT</div>
-                <h1 class="text-xl font-bold tracking-tight text-slate-900 hidden sm:block">Support Hub</h1>
+    <!-- ================= FLOATING NAVIGATION ================= -->
+    <div class="px-4 pt-6 pb-2 sticky top-0 z-50">
+        <nav class="max-w-6xl mx-auto glass-nav rounded-full px-4 py-3 md:px-6 md:py-4 flex justify-between items-center shadow-sm">
+            <div class="flex items-center gap-3 md:gap-4 cursor-pointer group" onclick="window.showHome()">
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-gradient-to-tr from-cyan-500 to-blue-600 text-white rounded-full flex items-center justify-center font-black text-xl shadow-md shadow-blue-500/30 group-hover:shadow-blue-500/50 transition-all">IT</div>
+                <h1 class="text-xl md:text-2xl font-black tracking-tight text-slate-800">Support <span class="text-blue-600">Hub</span></h1>
             </div>
-            <div class="flex items-center gap-4 sm:gap-6">
-                <button onclick="window.switchView('track-view')" class="text-sm font-black text-indigo-600 hover:text-indigo-800 bg-indigo-50 px-4 py-2 rounded-lg transition shadow-sm">Track Ticket</button>
-                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-slate-600 transition hidden sm:block">Admin Portal</a>
-                <div class="w-10 h-10 bg-slate-100 border border-slate-200 rounded-full flex items-center justify-center text-slate-500 font-bold">ME</div>
+            <div class="flex items-center gap-3 md:gap-6">
+                <button onclick="window.switchView('track-view')" class="text-sm font-bold text-blue-600 hover:text-white hover:bg-blue-600 bg-blue-50 px-4 md:px-6 py-2.5 rounded-full transition-colors duration-300">Track Ticket</button>
+                <a href="admin.html" class="text-sm font-bold text-slate-400 hover:text-slate-700 transition-colors hidden sm:block">Admin Login</a>
+                <div class="w-10 h-10 md:w-12 md:h-12 bg-slate-100 border-2 border-white rounded-full flex items-center justify-center text-slate-500 font-black shadow-sm text-sm">ME</div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </div>
 
-    <main class="max-w-6xl mx-auto px-6 py-10">
+    <!-- ================= MAIN CONTENT AREA ================= -->
+    <main class="max-w-6xl mx-auto px-4 md:px-6 py-8 md:py-12 w-full flex-1 flex flex-col">
         
+        <!-- ================= HOME VIEW ================= -->
         <div id="home-view" class="view active">
-            <div class="mb-12 text-center md:text-left flex flex-col md:flex-row justify-between items-center gap-6">
-                <div>
-                    <h2 class="text-4xl font-black text-slate-900 mb-3 tracking-tight">How can we help today?</h2>
-                    <p class="text-lg text-slate-500 mb-4">Select a category below to submit a new request to the IT team.</p>
+            
+            <!-- Hero Section -->
+            <div class="mb-12 md:mb-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div class="max-w-2xl">
+                    <h2 class="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 mb-4 tracking-tight leading-tight">
+                        How can we <br class="hidden md:block" />
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600">help you today?</span>
+                    </h2>
+                    <p class="text-lg md:text-xl text-slate-500 font-medium">Select a category below to securely submit a request to the IT Service Desk.</p>
                 </div>
-                <div class="bg-indigo-50 border border-indigo-100 p-4 rounded-2xl max-w-sm w-full shadow-sm text-center md:text-left">
-                    <p class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-1">System Status</p>
-                    <p class="text-sm font-bold text-emerald-600">All systems operational.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-                <div onclick="window.startRequest('Hardware & Devices')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
-                    <div class="w-14 h-14 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💻</div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Hardware</h3>
-                    <p class="text-sm text-slate-500">Laptops, monitors, printers.</p>
-                </div>
-                <div onclick="window.startRequest('Software & Access')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
-                    <div class="w-14 h-14 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🔐</div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Software Access</h3>
-                    <p class="text-sm text-slate-500">App installs, licenses.</p>
-                </div>
-                <div onclick="window.startRequest('Network & WiFi')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
-                    <div class="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-2xl flex items-center justify-center text-2xl mb-6">🌐</div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">Network</h3>
-                    <p class="text-sm text-slate-500">WiFi, VPN access.</p>
-                </div>
-                <div onclick="window.startRequest('General Support')" class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition duration-300 cursor-pointer">
-                    <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center text-2xl mb-6">💬</div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-2">General IT</h3>
-                    <p class="text-sm text-slate-500">Password resets, email.</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="track-view" class="view max-w-xl mx-auto">
-            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
-                &larr; Back to Dashboard
-            </button>
-            <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-                <h2 class="text-2xl font-black text-slate-800 mb-2">Track Your Ticket</h2>
-                <p class="text-slate-500 mb-8">Enter your TKT number below to check its live status.</p>
                 
-                <form onsubmit="window.checkTicketStatus(event)" class="space-y-4">
-                    <input type="text" id="track-id" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl font-bold text-lg uppercase tracking-wider text-center focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="e.g. TKT-1234" required>
-                    <button id="track-btn" type="submit" class="w-full bg-slate-900 text-white font-bold px-10 py-4 rounded-xl hover:bg-slate-800 transition shadow-lg">Check Status</button>
-                </form>
-
-                <div id="track-result" class="mt-8 hidden"></div>
-            </div>
-        </div>
-
-        <div id="form-view" class="view max-w-3xl mx-auto">
-            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-slate-800 transition">
-                &larr; Back to Dashboard
-            </button>
-            <div class="bg-white p-10 rounded-3xl shadow-xl shadow-slate-200/50 border border-slate-100">
-                <h2 class="text-2xl font-black text-slate-800 mb-8 pb-6 border-b border-slate-100">New Request: <span id="selected-category" class="text-indigo-600"></span></h2>
-                <form onsubmit="window.submitTicket(event)" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Full Name" required>
-                        
-                        <!-- UPDATED DEPARTMENT DROPDOWN -->
-                        <select id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer" required>
-                            <option value="" disabled selected>Select Department...</option>
-                            <option value="Human Resources">Human Resources</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Accounting">Accounting</option>
-                            <option value="Information Technology">Information Technology</option>
-                            <option value="Design">Design</option>
-                            <option value="Safety">Safety</option>
-                            <option value="Civil">Civil</option>
-                            <option value="Survey">Survey</option>
-                            <option value="P&M">P&M</option>
-                            <option value="Planning">Planning</option>
-                            <option value="Billing">Billing</option>
-                            <option value="DC">DC</option>
-                            <option value="QA/QC">QA/QC</option>
-                            <option value="MEP">MEP</option>
-                            <option value="Electrical">Electrical</option>
-                            <option value="Instrumentation">Instrumentation</option>
-                            <option value="Executive / Management">Executive / Management</option>
-                            <option value="Other">Other</option>
-                        </select>
-
-                        <input type="text" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Mobile Number" required>
-                        
-                        <select id="t-priority" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl text-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition cursor-pointer" required>
-                            <option value="" disabled selected>Select Urgency...</option>
-                            <option value="Low">Low (General Inquiry / Request)</option>
-                            <option value="Normal">Normal (Standard Issue)</option>
-                            <option value="High">High (Work is Blocked)</option>
-                            <option value="Critical">Critical (System Down / VIP)</option>
-                        </select>
-
-                        <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 transition md:col-span-2" placeholder="Employee ID" required>
+                <!-- System Status Pill -->
+                <div class="bg-white/60 backdrop-blur-md border border-white p-5 rounded-3xl shadow-sm text-left flex items-center gap-4 min-w-[240px]">
+                    <div class="relative flex h-4 w-4">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500"></span>
                     </div>
-                    <textarea id="t-desc" rows="4" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500 transition" placeholder="Issue Description..." required></textarea>
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">System Status</p>
+                        <p class="text-sm font-bold text-slate-800">All systems operational.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
+                <!-- Hardware -->
+                <div onclick="window.startRequest('Hardware & Devices')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-blue-500/30 relative z-10">💻</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Hardware</h3>
+                    <p class="text-sm font-medium text-slate-500 relative z-10">Laptops, monitors, printers, peripherals.</p>
+                </div>
+                
+                <!-- Software -->
+                <div onclick="window.startRequest('Software & Access')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-purple-500/30 relative z-10">🔐</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Software Access</h3>
+                    <p class="text-sm font-medium text-slate-500 relative z-10">App installations, licenses, permissions.</p>
+                </div>
+                
+                <!-- Network -->
+                <div onclick="window.startRequest('Network & WiFi')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-emerald-500/30 relative z-10">🌐</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Network & WiFi</h3>
+                    <p class="text-sm font-medium text-slate-500 relative z-10">Internet issues, VPN access, firewall.</p>
+                </div>
+                
+                <!-- General -->
+                <div onclick="window.startRequest('General Support')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-50 to-orange-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
+                    <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-amber-500/30 relative z-10">💬</div>
+                    <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">General IT</h3>
+                    <p class="text-sm font-medium text-slate-500 relative z-10">Password resets, email issues, questions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TRACK TICKET VIEW ================= -->
+        <div id="track-view" class="view w-full max-w-xl mx-auto mt-4 md:mt-10">
+            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors bg-white/50 px-4 py-2 rounded-full w-max backdrop-blur-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Return to Home
+            </button>
+            
+            <div class="bg-white p-8 md:p-12 rounded-[2rem] soft-shadow border border-slate-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                <h2 class="text-3xl font-black text-slate-800 mb-3 tracking-tight">Track Your Ticket</h2>
+                <p class="text-slate-500 font-medium mb-8">Enter your TKT number below to check its live resolution status.</p>
+                
+                <form onsubmit="window.checkTicketStatus(event)" class="space-y-5">
+                    <input type="text" id="track-id" class="w-full bg-slate-50 border border-slate-200 p-5 rounded-2xl font-black text-xl uppercase tracking-widest text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white focus:border-blue-500 transition-all text-[16px] placeholder-slate-300" placeholder="e.g. TKT-1234" required>
+                    <button id="track-btn" type="submit" class="w-full bg-slate-900 text-white font-bold text-lg px-10 py-5 rounded-2xl hover:bg-blue-600 transition-colors shadow-lg active:scale-[0.98]">Check Live Status</button>
+                </form>
+
+                <div id="track-result" class="mt-8 hidden transition-all"></div>
+            </div>
+        </div>
+
+        <!-- ================= NEW REQUEST FORM VIEW ================= -->
+        <div id="form-view" class="view w-full max-w-3xl mx-auto mt-4 md:mt-10">
+            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors bg-white/50 px-4 py-2 rounded-full w-max backdrop-blur-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Return to Home
+            </button>
+            
+            <div class="bg-white p-6 md:p-10 rounded-[2.5rem] soft-shadow border border-slate-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                
+                <div class="mb-8 md:mb-10 pb-6 md:pb-8 border-b border-slate-100">
+                    <p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">New Support Request</p>
+                    <h2 class="text-3xl font-black text-slate-800 tracking-tight"><span id="selected-category" class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-500 to-blue-600"></span></h2>
+                </div>
+                
+                <form onsubmit="window.submitTicket(event)" class="space-y-6 md:space-y-8">
                     
-                    <button id="submit-btn" type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold px-10 py-4 rounded-xl hover:shadow-xl transition">Submit Request</button>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
+                        <!-- Name -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Full Name</label>
+                            <input type="text" id="t-name" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium text-[16px]" placeholder="John Doe" required>
+                        </div>
+                        
+                        <!-- Employee ID -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Employee ID</label>
+                            <input type="text" id="t-empid" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium text-[16px]" placeholder="EMP-001" required>
+                        </div>
+
+                        <!-- Department -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Department</label>
+                            <select id="t-dept" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl font-medium text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer text-[16px]" required>
+                                <option value="" disabled selected>Select Department...</option>
+                                <option value="Human Resources">Human Resources</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Accounting">Accounting</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Design">Design</option>
+                                <option value="Safety">Safety</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Survey">Survey</option>
+                                <option value="P&M">P&M</option>
+                                <option value="Planning">Planning</option>
+                                <option value="Billing">Billing</option>
+                                <option value="DC">DC</option>
+                                <option value="QA/QC">QA/QC</option>
+                                <option value="MEP">MEP</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Instrumentation">Instrumentation</option>
+                                <option value="Executive / Management">Executive / Management</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+
+                        <!-- Mobile -->
+                        <div class="space-y-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Mobile Number</label>
+                            <input type="tel" id="t-mobile" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium text-[16px]" placeholder="+1 234 567 8900" required>
+                        </div>
+                        
+                        <!-- Priority -->
+                        <div class="space-y-2 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Issue Urgency</label>
+                            <select id="t-priority" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl font-medium text-slate-700 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all cursor-pointer text-[16px]" required>
+                                <option value="" disabled selected>Select Urgency Level...</option>
+                                <option value="Low">Low (General Inquiry / Software Request)</option>
+                                <option value="Normal">Normal (Standard Issue / Needs fixing soon)</option>
+                                <option value="High">High (Work is currently blocked)</option>
+                                <option value="Critical">Critical (Complete System Failure / VIP)</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Description -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider ml-1">Detailed Description</label>
+                        <textarea id="t-desc" rows="5" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl resize-none focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all font-medium text-[16px]" placeholder="Please describe the issue you are facing in detail..." required></textarea>
+                    </div>
+                    
+                    <!-- Submit Button -->
+                    <div class="pt-4">
+                        <button id="submit-btn" type="submit" class="w-full bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-lg px-10 py-5 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300">
+                            Submit Support Request
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
 
-        <div id="success-view" class="view max-w-lg mx-auto mt-10 text-center bg-white p-12 rounded-3xl shadow-xl border border-slate-100">
-            <div class="w-24 h-24 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center text-4xl mx-auto mb-6">✨</div>
-            <h2 class="text-3xl font-black text-slate-800 mb-3">Request Sent!</h2>
-            <p class="text-slate-500 mb-8">Ticket ID: <span id="success-id" class="font-black text-indigo-600 text-xl ml-2"></span></p>
-            <button onclick="window.showHome()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl hover:bg-slate-800 transition">Return to Dashboard</button>
+        <!-- ================= SUCCESS VIEW ================= -->
+        <div id="success-view" class="view w-full max-w-lg mx-auto mt-10 md:mt-20">
+            <div class="text-center bg-white p-12 md:p-16 rounded-[3rem] soft-shadow border border-slate-100 relative overflow-hidden">
+                <div class="absolute inset-0 bg-gradient-to-b from-emerald-50/50 to-transparent"></div>
+                <div class="relative z-10">
+                    <div class="w-24 h-24 bg-gradient-to-tr from-emerald-400 to-teal-500 text-white rounded-[2rem] flex items-center justify-center text-4xl mx-auto mb-8 shadow-xl shadow-emerald-500/30 transform rotate-12">🎉</div>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-800 mb-4 tracking-tight">Request Sent!</h2>
+                    <p class="text-slate-500 font-medium mb-8 text-lg">Your support ticket has been created securely.</p>
+                    
+                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-10 inline-block w-full">
+                        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Your Ticket ID</p>
+                        <p id="success-id" class="font-black text-blue-600 text-3xl tracking-widest"></p>
+                    </div>
+                    
+                    <button onclick="window.showHome()" class="w-full bg-slate-900 text-white font-bold text-lg py-5 rounded-2xl hover:bg-blue-600 transition-colors shadow-lg active:scale-[0.98]">
+                        Return to Dashboard
+                    </button>
+                </div>
+            </div>
         </div>
     </main>
 
+    <!-- ================= DATABASE & LOGIC ================= -->
     <script>
         const SUPABASE_URL = 'https://lyeezqunskbluichzljx.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx5ZWV6cXVuc2tibHVpY2h6bGp4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEwMzY0NTAsImV4cCI6MjEwNjYxMjQ1MH0.1zyQs2R0C6XYOWoQORp8fBeyOPtCrhEl5kuy6jmeWiU'; 
@@ -154,6 +275,7 @@
 
         let currentCategory = "";
 
+        // UI View Switcher
         window.switchView = function(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             if(viewId !== 'track-view') {
@@ -161,83 +283,19 @@
                 if(trackResult) trackResult.classList.add('hidden');
                 document.getElementById('track-id').value = '';
             }
-            setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 50);
+            // Small delay allows CSS display:block to apply before animating opacity/transform
+            setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 20);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         window.showHome = function() { window.switchView('home-view'); };
 
-        window.checkTicketStatus = async function(e) {
-            e.preventDefault();
-            if(!supabaseClient) return alert("Database connection missing.");
-
-            const btn = document.getElementById('track-btn');
-            const resultDiv = document.getElementById('track-result');
-            let ticketId = document.getElementById('track-id').value.trim().toUpperCase();
-
-            if(!ticketId.startsWith('TKT-') && !isNaN(ticketId)) {
-                ticketId = 'TKT-' + ticketId;
-                document.getElementById('track-id').value = ticketId;
-            }
-
-            btn.innerText = "Searching Cloud...";
-            btn.disabled = true;
-            resultDiv.classList.add('hidden');
-
-            try {
-                const { data, error } = await supabaseClient.from('tickets').select('*').eq('id', ticketId).single();
-
-                if (error || !data) {
-                    resultDiv.className = "mt-8 p-6 rounded-2xl border border-red-100 bg-red-50 text-center";
-                    resultDiv.innerHTML = `<p class="text-red-600 font-bold">Ticket not found.</p><p class="text-sm text-red-400 mt-1">Please check the ID and try again.</p>`;
-                } else {
-                    let statusColor = 'text-indigo-600 bg-indigo-100'; 
-                    if(data.status === 'Resolved') statusColor = 'text-emerald-600 bg-emerald-100';
-                    if(data.status === 'Pending') statusColor = 'text-amber-600 bg-amber-100';
-
-                    let priorityBadge = '';
-                    if(data.priority) {
-                        let pColor = data.priority === 'Critical' ? 'text-red-600 bg-red-100' : (data.priority === 'High' ? 'text-orange-600 bg-orange-100' : 'text-blue-600 bg-blue-100');
-                        if (data.priority === 'Low') pColor = 'text-slate-600 bg-slate-200';
-                        priorityBadge = `<span class="${pColor} px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider ml-2">${data.priority}</span>`;
-                    }
-
-                    let solutionHtml = '';
-                    if(data.solution && data.solution.trim() !== '') {
-                        solutionHtml = `
-                        <div class="mt-4 p-4 bg-white border border-emerald-100 rounded-xl shadow-sm">
-                            <p class="text-xs font-black text-emerald-600 uppercase tracking-widest mb-1">Solution Provided</p>
-                            <p class="text-sm font-semibold text-slate-700">${data.solution}</p>
-                        </div>`;
-                    }
-
-                    resultDiv.className = "mt-8 p-6 rounded-2xl border border-slate-100 bg-slate-50 text-left shadow-inner";
-                    resultDiv.innerHTML = `
-                        <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Live Status</p>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-black text-slate-800">${data.id} ${priorityBadge}</h3>
-                            <span class="${statusColor} px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider">${data.status}</span>
-                        </div>
-                        <div class="space-y-2 border-t border-slate-200 pt-4">
-                            <p class="text-sm"><span class="font-bold text-slate-700">Request:</span> <span class="text-slate-500">${data.category}</span></p>
-                            <p class="text-sm"><span class="font-bold text-slate-700">Assigned IT:</span> <span class="text-slate-500">${data.engineer || 'Unassigned'}</span></p>
-                            <p class="text-sm"><span class="font-bold text-slate-700">Date Logged:</span> <span class="text-slate-500">${data.date}</span></p>
-                        </div>
-                        ${solutionHtml}
-                    `;
-                }
-            } catch (err) {
-                resultDiv.className = "mt-8 p-6 rounded-2xl border border-red-100 bg-red-50 text-center";
-                resultDiv.innerHTML = `<p class="text-red-600 font-bold">Search failed. Try again.</p>`;
-            }
-            
-            resultDiv.classList.remove('hidden');
-            btn.innerText = "Check Status";
-            btn.disabled = false;
-        };
-
+        // Start Ticket Creation
         window.startRequest = function(category) {
             currentCategory = category;
             document.getElementById('selected-category').innerText = category;
+            
+            // Auto-fill from previous session if available
             try {
                 const lastUser = JSON.parse(localStorage.getItem('last_user_details'));
                 if(lastUser) {
@@ -260,12 +318,13 @@
             window.switchView('form-view');
         };
 
+        // Submit Ticket to Supabase
         window.submitTicket = async function(e) {
             e.preventDefault();
             if(!supabaseClient) return alert("Database connection missing.");
 
             const btn = document.getElementById('submit-btn');
-            btn.innerText = "Saving to cloud...";
+            btn.innerHTML = `<span class="animate-pulse">Securely Saving...</span>`;
             btn.disabled = true;
 
             const ticketId = 'TKT-' + Math.floor(1000 + Math.random() * 9000);
@@ -290,6 +349,7 @@
                 const { error } = await supabaseClient.from('tickets').insert([newTicket]);
                 if(error) throw error;
 
+                // Save details for next time
                 localStorage.setItem('last_user_details', JSON.stringify({
                     name: newTicket.name, dept: newTicket.dept, mobile: newTicket.mobile, empid: newTicket.empid
                 }));
@@ -300,10 +360,101 @@
                 alert("Error saving ticket: " + error.message);
             }
             
-            btn.innerText = "Submit Request";
+            btn.innerText = "Submit Support Request";
             btn.disabled = false;
         };
 
+        // Track Live Status
+        window.checkTicketStatus = async function(e) {
+            e.preventDefault();
+            if(!supabaseClient) return alert("Database connection missing.");
+
+            const btn = document.getElementById('track-btn');
+            const resultDiv = document.getElementById('track-result');
+            let ticketId = document.getElementById('track-id').value.trim().toUpperCase();
+
+            // Auto-format ID if user just types numbers
+            if(!ticketId.startsWith('TKT-') && !isNaN(ticketId)) {
+                ticketId = 'TKT-' + ticketId;
+                document.getElementById('track-id').value = ticketId;
+            }
+
+            btn.innerHTML = `<span class="animate-pulse">Searching Cloud...</span>`;
+            btn.disabled = true;
+            resultDiv.classList.add('hidden');
+
+            try {
+                const { data, error } = await supabaseClient.from('tickets').select('*').eq('id', ticketId).single();
+
+                if (error || !data) {
+                    resultDiv.className = "mt-8 p-8 rounded-[2rem] border border-red-100 bg-red-50 text-center shadow-inner";
+                    resultDiv.innerHTML = `
+                        <div class="w-12 h-12 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-xl mx-auto mb-3">⚠️</div>
+                        <p class="text-red-600 font-bold text-lg">Ticket not found.</p>
+                        <p class="text-sm font-medium text-red-400 mt-1">Please check the ID and try again.</p>`;
+                } else {
+                    // Modern Tracking Card UI
+                    let statusColor = 'text-blue-700 bg-blue-100 border-blue-200'; 
+                    if(data.status === 'Resolved') statusColor = 'text-emerald-700 bg-emerald-100 border-emerald-200';
+                    if(data.status === 'Pending') statusColor = 'text-amber-700 bg-amber-100 border-amber-200';
+
+                    let priorityBadge = '';
+                    if(data.priority) {
+                        let pColor = data.priority === 'Critical' ? 'text-red-600 bg-red-100' : (data.priority === 'High' ? 'text-orange-600 bg-orange-100' : 'text-blue-600 bg-blue-100');
+                        if (data.priority === 'Low') pColor = 'text-slate-600 bg-slate-200';
+                        priorityBadge = `<span class="${pColor} px-2.5 py-1 rounded-[6px] text-[10px] font-black uppercase tracking-widest ml-3 align-middle">${data.priority}</span>`;
+                    }
+
+                    let solutionHtml = '';
+                    if(data.solution && data.solution.trim() !== '') {
+                        solutionHtml = `
+                        <div class="mt-6 p-5 bg-emerald-50/50 border border-emerald-100 rounded-2xl">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-emerald-500 text-lg">✨</span>
+                                <p class="text-[11px] font-black text-emerald-600 uppercase tracking-widest">Resolution Notes</p>
+                            </div>
+                            <p class="text-[15px] font-semibold text-slate-700 leading-relaxed pl-1">${data.solution}</p>
+                        </div>`;
+                    }
+
+                    resultDiv.className = "mt-8 p-6 md:p-8 rounded-[2rem] border border-slate-200 bg-white text-left shadow-lg shadow-slate-200/50";
+                    resultDiv.innerHTML = `
+                        <p class="text-[11px] font-black text-slate-400 uppercase tracking-widest mb-3">Live Status Tracker</p>
+                        <div class="flex flex-wrap items-center justify-between mb-6 gap-4">
+                            <h3 class="text-2xl md:text-3xl font-black text-slate-800">${data.id} ${priorityBadge}</h3>
+                            <span class="${statusColor} border px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest">${data.status}</span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-y-4 gap-x-4 border-t border-slate-100 pt-6">
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Request Type</p>
+                                <p class="text-sm font-bold text-slate-800">${data.category}</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Date Logged</p>
+                                <p class="text-sm font-bold text-slate-800">${data.date}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Assigned Engineer</p>
+                                <div class="flex items-center gap-2">
+                                    <div class="w-6 h-6 rounded-full bg-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-500 border border-slate-200">${data.engineer !== 'Unassigned' ? data.engineer.substring(0,2).toUpperCase() : '??'}</div>
+                                    <p class="text-sm font-bold text-slate-800">${data.engineer || 'Unassigned'}</p>
+                                </div>
+                            </div>
+                        </div>
+                        ${solutionHtml}
+                    `;
+                }
+            } catch (err) {
+                resultDiv.className = "mt-8 p-8 rounded-[2rem] border border-red-100 bg-red-50 text-center shadow-inner";
+                resultDiv.innerHTML = `<p class="text-red-600 font-bold">Search failed. Try again.</p>`;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            btn.innerText = "Check Live Status";
+            btn.disabled = false;
+        };
+
+        // Initialize
         window.onload = window.showHome;
     </script>
 </body>
