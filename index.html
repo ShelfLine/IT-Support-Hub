@@ -97,7 +97,7 @@
             <!-- Category Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-16">
                 <!-- Hardware -->
-                <div onclick="window.startRequest('Hardware & Devices')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                <div onclick="window.startTroubleshoot('Hardware & Devices')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-blue-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-cyan-50 to-blue-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-cyan-400 to-blue-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-blue-500/30 relative z-10">💻</div>
                     <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Hardware</h3>
@@ -105,7 +105,7 @@
                 </div>
                 
                 <!-- Software -->
-                <div onclick="window.startRequest('Software & Access')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                <div onclick="window.startTroubleshoot('Software & Access')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-purple-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-indigo-400 to-purple-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-purple-500/30 relative z-10">🔐</div>
                     <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Software Access</h3>
@@ -113,7 +113,7 @@
                 </div>
                 
                 <!-- Network -->
-                <div onclick="window.startRequest('Network & WiFi')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                <div onclick="window.startTroubleshoot('Network & WiFi')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-emerald-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-emerald-500/30 relative z-10">🌐</div>
                     <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">Network & WiFi</h3>
@@ -121,11 +121,46 @@
                 </div>
                 
                 <!-- General -->
-                <div onclick="window.startRequest('General Support')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
+                <div onclick="window.startTroubleshoot('General Support')" class="category-card bg-white p-8 rounded-[2rem] border border-slate-100 soft-shadow hover:shadow-2xl hover:shadow-amber-500/10 hover:-translate-y-2 transition-all duration-300 cursor-pointer relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-50 to-orange-50 rounded-bl-full -mr-8 -mt-8 transition-transform group-hover:scale-110"></div>
                     <div class="icon-wrapper w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 text-white rounded-2xl flex items-center justify-center text-3xl mb-8 shadow-lg shadow-amber-500/30 relative z-10">💬</div>
                     <h3 class="text-xl font-bold text-slate-800 mb-2 relative z-10">General IT</h3>
                     <p class="text-sm font-medium text-slate-500 relative z-10">Password resets, email issues, questions.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= TROUBLESHOOTING VIEW (NEW) ================= -->
+        <div id="troubleshoot-view" class="view w-full max-w-3xl mx-auto mt-4 md:mt-10">
+            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors bg-white/50 px-4 py-2 rounded-full w-max backdrop-blur-sm">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back
+            </button>
+            
+            <div class="bg-white p-6 md:p-10 rounded-[2.5rem] soft-shadow border border-slate-100 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-cyan-400 to-blue-500"></div>
+                
+                <div class="mb-6 md:mb-8 pb-6 border-b border-slate-100">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-black text-lg">💡</span>
+                        <p class="text-xs font-black text-blue-500 uppercase tracking-widest">Quick Fixes</p>
+                    </div>
+                    <h2 class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">Let's try a few things first.</h2>
+                    <p class="text-slate-500 font-medium mt-2">Before raising a ticket for <strong id="ts-category-name" class="text-slate-700"></strong>, try these common solutions. They fix 80% of issues instantly!</p>
+                </div>
+                
+                <!-- Dynamic Steps Container -->
+                <div id="ts-steps-container" class="space-y-4 mb-8">
+                    <!-- Populated by JS -->
+                </div>
+                
+                <div class="flex flex-col sm:flex-row gap-4 pt-4 mt-6 border-t border-slate-100">
+                    <button onclick="window.proceedToForm()" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-base px-6 py-4 rounded-2xl shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-[1.01] active:scale-[0.99] transition-all duration-300 order-2 sm:order-1">
+                        I still need help (Raise Ticket)
+                    </button>
+                    <button onclick="window.showHome()" class="flex-1 bg-emerald-50 text-emerald-600 border border-emerald-100 font-bold text-base px-6 py-4 rounded-2xl hover:bg-emerald-100 active:scale-[0.99] transition-all duration-300 order-1 sm:order-2">
+                        ✨ This fixed my issue!
+                    </button>
                 </div>
             </div>
         </div>
@@ -153,9 +188,9 @@
 
         <!-- ================= NEW REQUEST FORM VIEW ================= -->
         <div id="form-view" class="view w-full max-w-3xl mx-auto mt-4 md:mt-10">
-            <button onclick="window.showHome()" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors bg-white/50 px-4 py-2 rounded-full w-max backdrop-blur-sm">
+            <button onclick="window.startTroubleshoot(currentCategory)" class="mb-6 flex items-center gap-2 text-sm font-bold text-slate-400 hover:text-blue-600 transition-colors bg-white/50 px-4 py-2 rounded-full w-max backdrop-blur-sm">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-                Return to Home
+                Back to Troubleshooting
             </button>
             
             <div class="bg-white p-6 md:p-10 rounded-[2.5rem] soft-shadow border border-slate-100 relative overflow-hidden">
@@ -275,6 +310,33 @@
 
         let currentCategory = "";
 
+        // Troubleshooting Guides mapped to Categories
+        const troubleshootingGuides = {
+            'Hardware & Devices': [
+                "Ensure all power cables and connection cables are plugged in securely.",
+                "Perform a hard restart on your computer (turn it completely off, wait 10 seconds, turn it back on).",
+                "If dealing with a printer, ensure it has paper and is turned on.",
+                "Try plugging the device into a different USB port or power outlet."
+            ],
+            'Software & Access': [
+                "Close the application completely and reopen it.",
+                "If it's a web application, try clearing your browser cache or opening it in an 'Incognito' window.",
+                "Double-check that your caps lock is off and you are using the correct password.",
+                "Ensure your computer is connected to the company VPN (if required for the app)."
+            ],
+            'Network & WiFi': [
+                "Disconnect from the WiFi network and reconnect.",
+                "Restart your computer to refresh your network drivers.",
+                "Check if your colleagues are experiencing the same issue (it might be a building-wide outage).",
+                "Ensure your laptop's 'Airplane Mode' is turned off."
+            ],
+            'General Support': [
+                "Restart your computer (this resolves about 80% of general IT issues!).",
+                "Check your spam or junk folder if you are missing an expected email.",
+                "Ensure your computer has the latest system updates installed."
+            ]
+        };
+
         // UI View Switcher
         window.switchView = function(viewId) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -283,17 +345,40 @@
                 if(trackResult) trackResult.classList.add('hidden');
                 document.getElementById('track-id').value = '';
             }
-            // Small delay allows CSS display:block to apply before animating opacity/transform
             setTimeout(() => { document.getElementById(viewId).classList.add('active'); }, 20);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
         window.showHome = function() { window.switchView('home-view'); };
 
-        // Start Ticket Creation
-        window.startRequest = function(category) {
+        // Open Troubleshooting View instead of jumping straight to the form
+        window.startTroubleshoot = function(category) {
             currentCategory = category;
-            document.getElementById('selected-category').innerText = category;
+            
+            // Set Titles
+            document.getElementById('ts-category-name').innerText = category;
+            
+            // Generate Steps
+            const stepsContainer = document.getElementById('ts-steps-container');
+            stepsContainer.innerHTML = ''; // clear old
+            
+            const steps = troubleshootingGuides[category] || troubleshootingGuides['General Support'];
+            
+            steps.forEach((step, index) => {
+                stepsContainer.innerHTML += `
+                    <div class="flex items-start gap-4 p-4 bg-blue-50/50 border border-blue-100 rounded-2xl">
+                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 font-bold flex items-center justify-center flex-shrink-0 mt-0.5">${index + 1}</div>
+                        <p class="text-slate-700 font-medium pt-1">${step}</p>
+                    </div>
+                `;
+            });
+
+            window.switchView('troubleshoot-view');
+        };
+
+        // Proceed to Form from Troubleshooting View
+        window.proceedToForm = function() {
+            document.getElementById('selected-category').innerText = currentCategory;
             
             // Auto-fill from previous session if available
             try {
@@ -315,6 +400,7 @@
             
             document.getElementById('t-desc').value = '';
             document.getElementById('t-priority').value = '';
+            
             window.switchView('form-view');
         };
 
