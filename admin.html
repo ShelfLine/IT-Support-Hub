@@ -8,45 +8,26 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; background-color: #e2e8f0; }
         
         .view { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .view.active { display: flex; opacity: 1; }
         
-        /* Premium Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        /* Sidebar Scrollbar */
-        .sidebar-scroll::-webkit-scrollbar-thumb { background: #475569; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; border: 2px solid transparent; background-clip: padding-box; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; border: 2px solid transparent; background-clip: padding-box; }
+        .sidebar-scroll::-webkit-scrollbar-thumb { background: #475569; border: 2px solid transparent; background-clip: padding-box; }
 
-        /* Internal Momentum Scrolling */
-        .scroll-area {
-            -webkit-overflow-scrolling: touch;
-            scrollbar-width: thin;
-        }
+        .scroll-area { -webkit-overflow-scrolling: touch; scrollbar-width: thin; }
 
-        .dark-glass {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        .dark-glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.08); }
 
-        .blob {
-            position: absolute; filter: blur(80px); z-index: 0; opacity: 0.6;
-            animation: float 10s infinite alternate ease-in-out;
-        }
-        @keyframes float {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(30px, 30px) scale(1.1); }
-        }
+        .blob { position: absolute; filter: blur(80px); z-index: 0; opacity: 0.6; animation: float 10s infinite alternate ease-in-out; }
+        @keyframes float { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(30px, 30px) scale(1.1); } }
     </style>
 </head>
-<!-- fixed inset-0 and overflow-hidden locks the page exactly to the screen edges -->
-<body class="bg-[#F8FAFC] text-slate-800 fixed inset-0 overflow-hidden w-full h-[100dvh]">
+<body class="fixed inset-0 overflow-hidden w-full h-[100dvh]">
 
     <!-- ==============================================
          LOGIN VIEW
@@ -61,15 +42,9 @@
             <p class="text-slate-400 mb-8 text-sm font-medium">Secure access to the service desk.</p>
             
             <form onsubmit="window.loginAdmin(event)" class="space-y-4">
-                <div>
-                    <input type="email" id="admin-email" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 md:py-4 rounded-xl text-[16px] font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition-colors" placeholder="admin@company.com" required>
-                </div>
-                <div>
-                    <input type="password" id="admin-pwd" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 md:py-4 rounded-xl text-[16px] font-medium tracking-widest focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition-colors" placeholder="••••••••" required>
-                </div>
-                <button id="login-btn" type="submit" class="w-full min-h-[48px] bg-white text-slate-900 px-6 py-3.5 md:py-4 rounded-xl font-bold text-[16px] hover:bg-indigo-50 active:scale-[0.98] transition-all shadow-lg mt-2">
-                    Authenticate
-                </button>
+                <div><input type="email" id="admin-email" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 md:py-4 rounded-xl text-[16px] font-medium focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition-colors" placeholder="admin@company.com" required></div>
+                <div><input type="password" id="admin-pwd" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 md:py-4 rounded-xl text-[16px] font-medium tracking-widest focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 placeholder-slate-500 transition-colors" placeholder="••••••••" required></div>
+                <button id="login-btn" type="submit" class="w-full min-h-[48px] bg-white text-slate-900 px-6 py-3.5 md:py-4 rounded-xl font-bold text-[16px] hover:bg-indigo-50 active:scale-[0.98] transition-all shadow-lg mt-2">Authenticate</button>
             </form>
             
             <p id="login-err" class="text-red-400 text-sm mt-5 font-bold hidden bg-red-400/10 py-2 rounded-lg border border-red-400/20">Invalid credentials.</p>
@@ -82,8 +57,7 @@
          ============================================== -->
     <div id="mobile-overlay" onclick="window.toggleSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity"></div>
 
-    <!-- Main wrapper fills entire screen -->
-    <div id="dashboard-view" class="view h-full w-full flex relative overflow-hidden bg-[#F8FAFC]">
+    <div id="dashboard-view" class="view h-full w-full flex relative overflow-hidden bg-slate-100">
         
         <!-- SIDEBAR -->
         <aside id="sidebar" class="w-[280px] bg-slate-900 flex flex-col z-50 absolute lg:relative inset-y-0 left-0 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out h-full shadow-2xl lg:shadow-none border-r border-slate-800">
@@ -105,7 +79,6 @@
                     </button>
                 </div>
 
-                <!-- TICKET ACTIVITY CALENDAR -->
                 <div class="px-4 mt-8">
                     <p class="px-2 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-3">Ticket Activity</p>
                     <div class="bg-slate-800/50 rounded-2xl p-4 border border-slate-700/50 shadow-inner">
@@ -117,9 +90,7 @@
                         <div class="grid grid-cols-7 gap-1 text-center text-[10px] text-slate-400 font-bold mb-2">
                             <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
                         </div>
-                        <div id="calendar-grid" class="grid grid-cols-7 gap-y-2 gap-x-1 text-center">
-                            <!-- Populated via JS -->
-                        </div>
+                        <div id="calendar-grid" class="grid grid-cols-7 gap-y-2 gap-x-1 text-center"></div>
                     </div>
                 </div>
             </div>
@@ -127,19 +98,16 @@
             <div class="p-4 border-t border-slate-800 space-y-2 flex-shrink-0">
                 <button onclick="window.loadTickets()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-slate-800 text-slate-300 rounded-xl font-bold text-sm hover:bg-slate-700 active:scale-95 transition border border-slate-700">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    Sync
+                    Sync Data
                 </button>
-                <button onclick="window.logoutAdmin()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-xl font-semibold active:scale-95 transition text-sm">
-                    Logout
-                </button>
+                <button onclick="window.logoutAdmin()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 text-slate-400 hover:bg-red-500/10 hover:text-red-400 rounded-xl font-semibold active:scale-95 transition text-sm">Logout</button>
             </div>
         </aside>
 
-        <!-- MAIN CONTENT AREA (Flex Col setup for one-screen fit) -->
+        <!-- MAIN CONTENT -->
         <main class="flex-1 flex flex-col h-full w-full overflow-hidden relative">
             
-            <!-- HEADER -->
-            <header class="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 flex items-center justify-between px-4 z-20 flex-shrink-0">
+            <header class="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-20 flex-shrink-0 shadow-sm">
                 <div class="flex items-center gap-2">
                     <button onclick="window.toggleSidebar()" class="lg:hidden text-slate-500 hover:text-indigo-600 focus:outline-none p-2 rounded-xl active:bg-slate-100">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
@@ -152,7 +120,6 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>
                         <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-black flex items-center justify-center rounded-full border border-white hidden">0</span>
                     </button>
-                    
                     <div id="notif-dropdown" class="absolute right-0 mt-3 w-[280px] bg-white border border-slate-200 shadow-2xl rounded-2xl hidden z-50 overflow-hidden">
                         <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                             <h3 class="font-black text-slate-800 text-[10px] uppercase tracking-widest">Action Required</h3>
@@ -163,23 +130,20 @@
                 </div>
             </header>
 
-            <!-- DASHBOARD BODY (Fills remaining height, no page scroll) -->
-            <div class="flex-1 flex flex-col p-2 md:p-4 gap-3 md:gap-4 overflow-hidden w-full">
+            <div class="flex-1 flex flex-col p-3 md:p-6 gap-4 md:gap-6 overflow-hidden w-full">
                 
-                <!-- COMPACT TOOLBAR & METRICS -->
-                <div class="flex-shrink-0 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-sm">
-                    
-                    <!-- Search & Filter Controls -->
-                    <div class="flex flex-col sm:flex-row gap-2 flex-1 w-full lg:w-auto">
+                <!-- TOOLBAR -->
+                <div class="flex-shrink-0 flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                    <div class="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
                         <div class="relative flex-1 min-w-[200px]">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                             </div>
-                            <input type="text" oninput="window.searchTable(this.value)" id="search-input" placeholder="Search..." class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-3 py-2 md:py-2.5 text-[16px] md:text-sm focus:outline-none focus:border-indigo-500 transition font-medium">
+                            <input type="text" oninput="window.searchTable(this.value)" id="search-input" placeholder="Search ID, name, issue..." class="w-full bg-slate-50 border border-slate-300 rounded-lg pl-9 pr-3 py-2 md:py-2.5 text-[16px] md:text-sm focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition font-medium">
                         </div>
 
-                        <select id="dept-filter" onchange="window.filterByDept(this.value)" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 md:py-2.5 text-[16px] md:text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer font-bold text-slate-600 truncate">
-                            <option value="All">All Depts</option>
+                        <select id="dept-filter" onchange="window.filterByDept(this.value)" class="w-full sm:w-auto bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 md:py-2.5 text-[16px] md:text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer font-bold text-slate-700">
+                            <option value="All">All Departments</option>
                             <option value="Human Resources">HR</option>
                             <option value="Admin">Admin</option>
                             <option value="Information Technology">IT</option>
@@ -190,49 +154,33 @@
                         </select>
                     </div>
 
-                    <!-- Metrics Badges (Replaces the large cards) -->
                     <div class="flex flex-wrap gap-2 justify-between sm:justify-start flex-shrink-0 w-full lg:w-auto">
-                        <div id="active-date-badge" class="hidden bg-indigo-600 text-white px-3 py-1.5 rounded-xl border border-indigo-700 flex items-center gap-1.5 w-full sm:w-auto justify-between shadow-sm">
+                        <div id="active-date-badge" class="hidden bg-indigo-600 text-white px-3 py-1.5 rounded-lg border border-indigo-700 flex items-center gap-1.5 w-full sm:w-auto justify-between shadow-sm">
                             <span class="text-xs font-bold whitespace-nowrap" id="active-date-text"></span>
                             <button onclick="window.filterByDate(null)" class="hover:text-red-300 transition text-sm leading-none ml-2">&times;</button>
                         </div>
                         
-                        <div class="bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 flex items-center gap-2 flex-1 sm:flex-none justify-center">
-                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
-                            <span class="text-xs font-bold text-slate-500">Total: <span id="stat-total" class="text-slate-800 font-black">0</span></span>
+                        <div class="bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-2 flex-1 sm:flex-none justify-center">
+                            <span class="text-xs font-bold text-slate-600">Total: <span id="stat-total" class="text-slate-900 font-black">0</span></span>
                         </div>
-                        <div class="bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200 flex items-center gap-2 flex-1 sm:flex-none justify-center">
-                            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                            <span class="text-xs font-bold text-amber-700">Open: <span id="stat-open" class="font-black">0</span></span>
+                        <div class="bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-300 flex items-center gap-2 flex-1 sm:flex-none justify-center">
+                            <span class="text-xs font-bold text-amber-800">Open: <span id="stat-open" class="font-black">0</span></span>
                         </div>
-                        <div class="bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 flex items-center gap-2 flex-1 sm:flex-none justify-center hidden sm:flex">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
-                            <span class="text-xs font-bold text-emerald-700">Resolved: <span id="stat-resolved" class="font-black">0</span></span>
+                        <div class="bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-300 flex items-center gap-2 flex-1 sm:flex-none justify-center hidden sm:flex">
+                            <span class="text-xs font-bold text-emerald-800">Resolved: <span id="stat-resolved" class="font-black">0</span></span>
                         </div>
                     </div>
                 </div>
 
-                <!-- DYNAMIC TICKET QUEUE (Fills remaining screen space) -->
-                <div class="flex-1 flex flex-col bg-slate-50 md:bg-white rounded-2xl md:border border-slate-200 shadow-sm overflow-hidden relative">
-                    
-                    <!-- Table / Grid Header (Hidden on Mobile) -->
-                    <div class="hidden lg:grid grid-cols-12 gap-4 px-6 py-3 border-b border-slate-200 bg-slate-50 flex-shrink-0">
-                        <div class="col-span-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Ticket / User</div>
-                        <div class="col-span-4 text-[11px] font-black text-slate-400 uppercase tracking-widest">Problem & Solution</div>
-                        <div class="col-span-2 text-[11px] font-black text-slate-400 uppercase tracking-widest">Status & Action</div>
-                        <div class="col-span-3 text-[11px] font-black text-slate-400 uppercase tracking-widest">Resolution Notes Update</div>
-                    </div>
-                    
-                    <!-- Scrollable List Body -->
-                    <div id="admin-table-body" class="flex-1 overflow-y-auto scroll-area bg-transparent md:bg-white p-0 md:p-0">
-                        <div class="p-16 text-center">
+                <!-- RIGID TICKET CARDS LIST -->
+                <div class="flex-1 overflow-hidden relative bg-slate-100">
+                    <div id="admin-ticket-list" class="h-full overflow-y-auto scroll-area space-y-8 pb-10 px-1">
+                        <div class="p-16 text-center bg-white border-2 border-slate-200 rounded-2xl mx-auto max-w-lg mt-10">
                             <div class="inline-flex items-center gap-3 px-6 py-3 bg-indigo-50 text-indigo-600 rounded-full font-bold text-sm animate-pulse border border-indigo-100">
-                                <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                                 Syncing Cloud Database...
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </main>
@@ -250,7 +198,6 @@
         window.searchQuery = "";
         window.currentDeptFilter = "All"; 
         
-        // CALENDAR STATE
         let calDate = new Date();
         window.currentDateFilter = null; 
 
@@ -282,20 +229,18 @@
             
             list.innerHTML = '';
             if(openTickets.length === 0) {
-                list.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs font-bold">No new requests right now! 🎉</div>';
+                list.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs font-bold">No new requests right now!</div>';
                 return;
             }
             
             openTickets.slice(0, 5).forEach(t => {
-                let pColor = t.priority === 'Critical' ? 'text-red-500' : 'text-indigo-500';
                 list.innerHTML += `
                     <div class="p-3 hover:bg-slate-50 transition cursor-pointer border-b border-slate-50" onclick="window.searchFromNotif('${t.id}')">
                         <div class="flex justify-between items-start mb-1">
-                            <p class="text-[10px] font-black ${pColor} uppercase tracking-wider">New Request</p>
+                            <p class="text-[10px] font-black text-indigo-600 uppercase tracking-wider">New Request</p>
                             <p class="text-[10px] font-bold text-slate-400">#${t.id}</p>
                         </div>
                         <p class="text-sm font-bold text-slate-800 leading-snug truncate">${t.name}</p>
-                        <p class="text-[10px] text-slate-500 truncate mt-0.5 font-medium">${t.category} &bull; ${t.dept}</p>
                     </div>
                 `;
             });
@@ -355,7 +300,6 @@
 
         window.loadTickets = async function() {
             if(!supabaseClient) return alert("Database connection is missing.");
-            
             try {
                 const { data, error } = await supabaseClient.from('tickets').select('*').order('created_at', { ascending: false });
                 if(error) throw error;
@@ -369,8 +313,8 @@
                 window.renderCalendar(); 
                 window.renderTable(); 
             } catch (error) {
-                const tbody = document.getElementById('admin-table-body');
-                tbody.innerHTML = `<div class="p-10 text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl m-4">Database Error: ${error.message}</div>`;
+                const list = document.getElementById('admin-ticket-list');
+                list.innerHTML = `<div class="p-10 text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl m-4 border-2 border-red-200">Database Error: ${error.message}</div>`;
             }
         };
 
@@ -383,11 +327,8 @@
         };
 
         window.filterByDate = function(dateKey) {
-            if (window.currentDateFilter === dateKey) {
-                window.currentDateFilter = null; 
-            } else {
-                window.currentDateFilter = dateKey;
-            }
+            if (window.currentDateFilter === dateKey) window.currentDateFilter = null; 
+            else window.currentDateFilter = dateKey;
             
             const badge = document.getElementById('active-date-badge');
             const text = document.getElementById('active-date-text');
@@ -402,7 +343,6 @@
                 badge.classList.add('hidden');
                 badge.classList.remove('flex');
             }
-
             window.renderCalendar();
             window.renderTable();
             if(window.innerWidth < 1024 && window.currentDateFilter) window.toggleSidebar(); 
@@ -411,13 +351,11 @@
         window.renderCalendar = function() {
             const monthYear = document.getElementById('calendar-month-year');
             const grid = document.getElementById('calendar-grid');
-            
             const year = calDate.getFullYear();
             const month = calDate.getMonth();
-            
             const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-            monthYear.innerText = `${monthNames[month]} ${year}`;
             
+            monthYear.innerText = `${monthNames[month]} ${year}`;
             grid.innerHTML = '';
             
             const firstDay = new Date(year, month, 1).getDay();
@@ -429,7 +367,6 @@
                 if(!dStr) return;
                 let d = new Date(dStr);
                 if(isNaN(d)) return;
-                
                 const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
                 ticketCounts[key] = (ticketCounts[key] || 0) + 1;
             });
@@ -458,7 +395,7 @@
         };
 
         // ==========================================
-        // FILTERS & TABLE RENDERING (Responsive CSS Grid)
+        // RIGID CARD RENDERING
         // ==========================================
         window.filterByDept = function(dept) {
             window.currentDeptFilter = dept;
@@ -471,12 +408,11 @@
         };
 
         window.renderTable = function() {
-            const tbody = document.getElementById('admin-table-body');
-            tbody.innerHTML = '';
+            const list = document.getElementById('admin-ticket-list');
+            list.innerHTML = '';
             
             const filteredTickets = window.tickets.filter((t) => {
                 const desc = t.description || t.desc || "No description provided"; 
-                
                 if (window.currentDateFilter) {
                     let dStr = t.created_at || t.date;
                     if(!dStr) return false;
@@ -485,7 +421,6 @@
                     const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
                     if(key !== window.currentDateFilter) return false;
                 }
-
                 if (window.currentDeptFilter !== "All" && t.dept !== window.currentDeptFilter) return false;
                 if (window.searchQuery && !t.name.toLowerCase().includes(window.searchQuery) && !desc.toLowerCase().includes(window.searchQuery) && !t.id.toLowerCase().includes(window.searchQuery)) return false;
                 return true;
@@ -496,7 +431,7 @@
             document.getElementById('stat-resolved').innerText = filteredTickets.filter(t => t.status === 'Resolved').length;
 
             if(filteredTickets.length === 0) {
-                tbody.innerHTML = `<div class="p-16 text-center text-slate-400 font-bold text-sm bg-white rounded-xl mx-2 md:mx-0">No tickets found matching your criteria.</div>`;
+                list.innerHTML = `<div class="p-16 text-center text-slate-500 font-bold text-sm bg-white rounded-2xl border-2 border-slate-200 mx-auto max-w-lg mt-10">No tickets found matching your criteria.</div>`;
                 return;
             }
 
@@ -504,94 +439,123 @@
                 const desc = t.description || t.desc || "No description provided"; 
                 const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 
-                let sColor = 'bg-indigo-50 text-indigo-700 border-indigo-200';
-                if(t.status === 'Resolved') sColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
-                else if(t.status === 'Pending') sColor = 'bg-amber-50 text-amber-700 border-amber-200';
+                // HEADER COLORS FOR ABSOLUTE CLARITY
+                let headerColor = 'bg-slate-100 border-slate-300 text-slate-800';
+                let sColor = 'bg-slate-50 border-slate-300 text-slate-700';
                 
+                if(t.status === 'Resolved') {
+                    headerColor = 'bg-emerald-100 border-emerald-300 text-emerald-900';
+                    sColor = 'bg-emerald-50 border-emerald-300 text-emerald-700';
+                }
+                else if(t.status === 'Pending') {
+                    headerColor = 'bg-amber-100 border-amber-300 text-amber-900';
+                    sColor = 'bg-amber-50 border-amber-300 text-amber-800';
+                }
+
                 const pri = t.priority || 'Normal';
-                let pColor = 'text-blue-700 bg-blue-50 border border-blue-100';
-                if (pri === 'Critical') pColor = 'text-red-700 bg-red-50 border border-red-100 shadow-sm';
-                else if (pri === 'High') pColor = 'text-amber-700 bg-amber-50 border border-amber-100';
-                else if (pri === 'Low') pColor = 'text-slate-600 bg-slate-100 border border-slate-200';
+                let pColor = 'bg-blue-100 text-blue-800 border border-blue-200';
+                if (pri === 'Critical') { pColor = 'bg-red-100 text-red-800 border border-red-300 shadow-sm'; }
+                else if (pri === 'High') { pColor = 'bg-orange-100 text-orange-800 border border-orange-300'; }
+                else if (pri === 'Low') { pColor = 'bg-slate-200 text-slate-700 border border-slate-300'; }
+                
+                if (t.status === 'Open' && pri === 'Critical') {
+                    headerColor = 'bg-red-100 border-red-300 text-red-900';
+                }
 
                 let displayDate = t.date;
                 try {
                     let d = new Date(t.created_at || t.date);
-                    if(!isNaN(d)) displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+                    if(!isNaN(d)) displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 } catch(e) {}
 
-                let closedHTML = `<span class="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">Pending</span>`;
-                if(t.status === 'Resolved') closedHTML = `<span class="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">Closed</span>`;
-
-                let solutionDisplay = `<p class="text-xs text-amber-600 font-semibold italic mt-1 bg-amber-50 inline-block px-2 py-1 rounded">Pending Solution...</p>`;
+                let solutionDisplay = `<p class="text-[12px] text-amber-700 font-bold italic mt-3 bg-amber-50 border border-amber-200 inline-block px-3 py-1.5 rounded-lg w-max shadow-sm">Pending Solution...</p>`;
                 if(t.solution && t.solution.trim() !== '') {
                     solutionDisplay = `
-                        <div class="mt-2.5 p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl relative">
-                            <span class="absolute -top-2 left-3 bg-emerald-100 text-emerald-700 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full">Solution Given</span>
-                            <p class="text-[13px] font-semibold text-slate-700 leading-snug mt-1">${t.solution}</p>
+                        <div class="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-xl relative shadow-sm">
+                            <span class="absolute -top-2.5 left-4 bg-emerald-100 text-emerald-800 text-[10px] font-black uppercase tracking-widest px-2.5 py-1 rounded-full border border-emerald-300 shadow-sm">Solution Given</span>
+                            <p class="text-sm font-bold text-slate-800 leading-relaxed mt-1 whitespace-pre-wrap">${t.solution}</p>
                         </div>
                     `;
                 }
 
-                // DYNAMIC RESPONSIVE ROW (Stacks to cards on mobile, grid on PC)
-                tbody.innerHTML += `
-                    <div class="flex flex-col lg:grid lg:grid-cols-12 gap-3 md:gap-4 p-4 lg:p-5 lg:border-b border-slate-200 bg-white lg:hover:bg-slate-50 transition-colors mb-3 lg:mb-0 rounded-2xl lg:rounded-none shadow-sm lg:shadow-none border lg:border-0 group">
+                // THE COMPLETELY ISOLATED, RIGID TICKET CARD
+                list.innerHTML += `
+                    <div class="bg-white rounded-2xl shadow-md border-2 border-slate-300 mb-8 overflow-hidden flex flex-col transform transition hover:shadow-lg">
                         
-                        <!-- Col 1: Identity & Date -->
-                        <div class="col-span-3 align-top">
-                            <div class="flex items-start gap-3 md:gap-4 mb-2 lg:mb-3">
-                                <div class="w-10 h-10 md:w-11 md:h-11 rounded-xl bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center font-bold text-slate-500 border border-slate-300 shadow-sm flex-shrink-0">${initials}</div>
-                                <div>
-                                    <p class="font-black text-slate-800 text-sm md:text-base leading-tight">#${t.id}</p>
-                                    <p class="text-xs font-bold text-slate-900 mt-1 truncate max-w-[200px]">${t.name}</p>
-                                    <p class="text-[11px] font-semibold text-slate-500 mt-0.5">${t.dept} &bull; ${t.empid}</p>
+                        <!-- DISTINCT TICKET HEADER -->
+                        <div class="${headerColor} px-4 lg:px-6 py-3 md:py-4 flex justify-between items-center border-b-2">
+                            <div class="flex items-center gap-3">
+                                <span class="font-black text-lg md:text-xl tracking-tight">#${t.id}</span>
+                                <span class="bg-white/70 px-3 py-1 rounded-md border border-black/10 text-xs font-black uppercase tracking-widest shadow-sm">${t.status}</span>
+                            </div>
+                            <div class="text-right hidden sm:block">
+                                <span class="text-xs font-black uppercase tracking-widest opacity-60 block">Logged</span>
+                                <span class="text-sm font-bold opacity-90">${displayDate}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- TICKET BODY (Rigid Columns) -->
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
+                            
+                            <!-- Col 1: User Details -->
+                            <div class="col-span-1 lg:col-span-3 p-5 lg:p-6 flex flex-col bg-white">
+                                <div class="flex items-center gap-4 mb-4">
+                                    <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-500 text-xl border-2 border-slate-200 shadow-inner flex-shrink-0">${initials}</div>
+                                    <div class="overflow-hidden">
+                                        <p class="font-black text-slate-900 text-base truncate">${t.name}</p>
+                                        <p class="text-[13px] font-bold text-slate-600 mt-0.5 truncate">${t.dept}</p>
+                                        <p class="text-[11px] font-bold text-slate-400 mt-0.5 uppercase tracking-wider">ID: ${t.empid}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-auto bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                                    <p class="text-[10px] uppercase font-black text-slate-400 mb-1.5 tracking-widest">Priority Level</p>
+                                    <span class="${pColor} px-3 py-1 rounded-lg text-xs font-black uppercase tracking-widest inline-block">${pri}</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-1 mt-1 lg:mt-2 bg-slate-50 lg:bg-transparent p-2 lg:p-0 rounded-lg">
-                                <div class="flex items-center gap-1.5"><span class="text-[10px] uppercase font-bold text-slate-400 w-12">Date:</span> <span class="text-xs font-bold text-slate-700">${displayDate}</span></div>
-                                <div class="flex items-center gap-1.5"><span class="text-[10px] uppercase font-bold text-slate-400 w-12">Status:</span> ${closedHTML}</div>
-                            </div>
-                        </div>
 
-                        <!-- Col 2: Problem & Solution -->
-                        <div class="col-span-4 align-top flex flex-col justify-center">
-                            <span class="font-bold text-indigo-700 text-[10px] uppercase tracking-widest mb-1">Reported Problem</span>
-                            <span class="font-bold text-slate-800 text-sm mb-1 inline-block">${t.category}</span>
-                            <p class="text-[13px] text-slate-600 font-medium leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">${desc}</p>
-                            ${solutionDisplay}
-                        </div>
+                            <!-- Col 2: The Problem -->
+                            <div class="col-span-1 lg:col-span-4 p-5 lg:p-6 bg-slate-50/50 flex flex-col">
+                                <p class="text-[10px] uppercase font-black text-slate-400 mb-1.5 tracking-widest">Category</p>
+                                <p class="font-black text-slate-800 text-sm mb-4 bg-white p-2 rounded-lg border border-slate-200 inline-block w-max shadow-sm">${t.category}</p>
+                                
+                                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1.5 tracking-widest">Description</p>
+                                <div class="text-[13px] md:text-sm font-semibold text-slate-700 leading-relaxed bg-white p-4 rounded-xl border border-slate-200 min-h-[80px] shadow-sm whitespace-pre-wrap">${desc}</div>
+                                
+                                <div class="mt-4 flex-1">
+                                    ${solutionDisplay}
+                                </div>
+                            </div>
 
-                        <!-- Col 3: Status & Action Control (Mobile Grid) -->
-                        <div class="col-span-2 align-top grid grid-cols-2 lg:flex lg:flex-col gap-3 lg:gap-0 mt-2 lg:mt-0 bg-slate-50 lg:bg-transparent p-3 lg:p-0 rounded-xl border border-slate-100 lg:border-0">
-                            <div>
-                                <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Priority</label>
-                                <span class="${pColor} px-2 py-1 rounded-[6px] text-[10px] font-black uppercase tracking-widest block w-max lg:mb-3">${pri}</span>
+                            <!-- Col 3: Controls -->
+                            <div class="col-span-1 lg:col-span-2 p-5 lg:p-6 flex flex-col justify-start gap-5 bg-white">
+                                <div>
+                                    <label class="text-[10px] uppercase font-black text-slate-400 mb-2 block tracking-widest">Change Status</label>
+                                    <select onchange="window.updateStatus('${t.id}', this.value)" class="${sColor} w-full p-3 rounded-xl font-black text-xs uppercase tracking-widest cursor-pointer shadow-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-colors">
+                                        <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
+                                        <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
+                                        <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="text-[10px] uppercase font-black text-slate-400 mb-2 block tracking-widest">Assigned IT Agent</label>
+                                    <input type="text" value="${t.engineer === 'Unassigned' ? '' : t.engineer}" placeholder="Assign to..." 
+                                        onblur="window.assignEngineer('${t.id}', this.value)" class="w-full border-2 border-slate-200 bg-slate-50 hover:bg-white rounded-xl p-3 text-sm font-bold text-slate-800 focus:border-indigo-500 focus:bg-white outline-none transition placeholder:text-slate-400 shadow-sm">
+                                </div>
                             </div>
-                            <div>
-                                <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Change Status</label>
-                                <select onchange="window.updateStatus('${t.id}', this.value)" class="${sColor} px-2 py-1.5 md:py-2 rounded-lg font-bold text-xs uppercase tracking-wider cursor-pointer focus:outline-none border shadow-sm transition-colors w-full lg:mb-3">
-                                    <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
-                                    <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                    <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-                                </select>
-                            </div>
-                            <div class="col-span-2">
-                                <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block">Assigned To</label>
-                                <input type="text" value="${t.engineer === 'Unassigned' ? '' : t.engineer}" placeholder="Assignee name..." 
-                                    onblur="window.assignEngineer('${t.id}', this.value)" class="bg-white lg:bg-transparent border lg:border-b-2 lg:border-t-0 lg:border-l-0 lg:border-r-0 border-slate-200 hover:border-slate-300 focus:border-indigo-500 p-2 lg:px-0 lg:py-1.5 w-full text-[16px] md:text-xs font-bold text-slate-800 focus:outline-none transition-colors placeholder:text-slate-400 placeholder:font-medium rounded-lg lg:rounded-none">
-                            </div>
-                        </div>
 
-                        <!-- Col 4: Note Editor -->
-                        <div class="col-span-3 align-top flex flex-col gap-2 relative mt-2 lg:mt-0">
-                            <label class="text-[10px] uppercase font-bold text-slate-400 hidden lg:block">Update Resolution</label>
-                            <textarea id="sol-${t.id}" placeholder="Type resolution note..." class="bg-slate-50 lg:bg-white border border-slate-200 p-2.5 rounded-xl w-full text-[16px] md:text-xs focus:outline-none focus:bg-white focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all resize-none h-20 lg:h-24 shadow-sm font-medium text-slate-700">${t.solution || ''}</textarea>
-                            
-                            <div class="flex justify-between items-center mt-1">
-                                <button onclick="window.deleteTicket('${t.id}')" title="Delete Ticket" class="text-slate-400 hover:text-red-500 font-bold transition p-2 rounded-lg hover:bg-red-50 inline-flex items-center justify-center border border-transparent hover:border-red-100">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                </button>
-                                <button onclick="window.updateSolution('${t.id}', event)" class="bg-slate-900 text-white text-[10px] font-bold py-2.5 px-6 lg:py-2 lg:px-4 rounded-lg hover:bg-slate-800 active:scale-95 transition shadow-sm uppercase tracking-widest flex-1 lg:flex-none ml-3 lg:ml-0 text-center justify-center flex">Save Note</button>
+                            <!-- Col 4: Note Editor -->
+                            <div class="col-span-1 lg:col-span-3 p-5 lg:p-6 bg-slate-50 flex flex-col h-full">
+                                <label class="text-[10px] uppercase font-black text-slate-400 mb-2 block tracking-widest">Resolution Notes</label>
+                                <textarea id="sol-${t.id}" placeholder="Type solution here..." class="flex-1 w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none text-[16px] md:text-sm font-semibold text-slate-700 shadow-sm min-h-[120px] mb-4">${t.solution || ''}</textarea>
+                                
+                                <div class="flex gap-3 mt-auto">
+                                    <button onclick="window.deleteTicket('${t.id}')" title="Delete Ticket" class="px-4 py-3 md:py-2 bg-white border-2 border-slate-200 text-slate-400 hover:text-red-600 hover:border-red-300 hover:bg-red-50 rounded-xl transition shadow-sm font-bold flex items-center justify-center">
+                                        <svg class="w-5 h-5 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                    <button onclick="window.updateSolution('${t.id}', event)" class="flex-1 bg-slate-900 text-white font-black py-3 md:py-2 px-4 rounded-xl hover:bg-indigo-600 active:scale-95 transition shadow-lg uppercase tracking-widest text-xs">
+                                        Save Notes
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -599,57 +563,33 @@
             });
         };
 
-        // ==========================================
-        // TICKET OPERATIONS
-        // ==========================================
         window.updateStatus = async function(id, newStatus) {
-            try {
-                await supabaseClient.from('tickets').update({ status: newStatus }).eq('id', id);
-                window.loadTickets(); 
-            } catch (e) { alert("Failed to update status: " + e.message); }
+            try { await supabaseClient.from('tickets').update({ status: newStatus }).eq('id', id); window.loadTickets(); } 
+            catch (e) { alert("Failed to update status: " + e.message); }
         };
 
         window.assignEngineer = async function(id, engName) {
-            try {
-                await supabaseClient.from('tickets').update({ engineer: engName.trim() || 'Unassigned' }).eq('id', id);
-                window.loadTickets();
-            } catch (e) { alert("Failed to assign engineer: " + e.message); }
+            try { await supabaseClient.from('tickets').update({ engineer: engName.trim() || 'Unassigned' }).eq('id', id); window.loadTickets(); } 
+            catch (e) { alert("Failed to assign engineer: " + e.message); }
         };
 
         window.updateSolution = async function(id, event) {
-            const btn = event.target;
-            const textElement = document.getElementById(`sol-${id}`);
-            const text = textElement.value.trim();
-            const originalText = btn.innerText;
-            
+            const btn = event.target; const textElement = document.getElementById(`sol-${id}`); const text = textElement.value.trim(); const originalText = btn.innerText;
             btn.innerText = "SAVING...";
             try {
                 const { error } = await supabaseClient.from('tickets').update({ solution: text }).eq('id', id);
                 if(error) throw error;
-                btn.innerText = "SAVED!";
-                btn.classList.replace('bg-slate-900', 'bg-emerald-500');
-                
-                const t = window.tickets.find(x => x.id === id);
-                if(t) t.solution = text;
+                btn.innerText = "SAVED!"; btn.classList.replace('bg-slate-900', 'bg-emerald-500'); btn.classList.replace('hover:bg-indigo-600', 'hover:bg-emerald-600');
+                const t = window.tickets.find(x => x.id === id); if(t) t.solution = text;
                 setTimeout(() => window.renderTable(), 500);
-
-                setTimeout(() => { 
-                    btn.innerText = originalText; 
-                    btn.classList.replace('bg-emerald-500', 'bg-slate-900');
-                }, 2000);
-            } catch (e) { 
-                alert("Database Error: " + e.message);
-                btn.innerText = "ERROR";
-                btn.classList.replace('bg-slate-900', 'bg-red-500');
-            }
+                setTimeout(() => { btn.innerText = originalText; btn.classList.replace('bg-emerald-500', 'bg-slate-900'); btn.classList.replace('hover:bg-emerald-600', 'hover:bg-indigo-600'); }, 2000);
+            } catch (e) { alert("Database Error: " + e.message); btn.innerText = "ERROR"; btn.classList.replace('bg-slate-900', 'bg-red-500'); }
         };
 
         window.deleteTicket = async function(id) {
             if(confirm('Permanently delete this ticket record?')) {
-                try {
-                    await supabaseClient.from('tickets').delete().eq('id', id);
-                    window.loadTickets();
-                } catch (e) { alert("Failed to delete ticket: " + e.message); }
+                try { await supabaseClient.from('tickets').delete().eq('id', id); window.loadTickets(); } 
+                catch (e) { alert("Failed to delete ticket: " + e.message); }
             }
         };
     </script>
