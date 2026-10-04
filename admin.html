@@ -154,21 +154,27 @@
                         </select>
                     </div>
 
-                    <div class="flex flex-wrap gap-2 justify-between sm:justify-start flex-shrink-0 w-full lg:w-auto">
-                        <div id="active-date-badge" class="hidden bg-indigo-600 text-white px-3 py-1.5 rounded-lg border border-indigo-700 flex items-center gap-1.5 w-full sm:w-auto justify-between shadow-sm">
+                    <!-- METRICS BADGES (FIXED VISIBILITY FOR MOBILE) -->
+                    <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+                        
+                        <div id="active-date-badge" class="hidden bg-indigo-600 text-white px-3 py-2 rounded-lg border border-indigo-700 items-center justify-between shadow-sm w-full sm:w-auto">
                             <span class="text-xs font-bold whitespace-nowrap" id="active-date-text"></span>
                             <button onclick="window.filterByDate(null)" class="hover:text-red-300 transition text-sm leading-none ml-2">&times;</button>
                         </div>
                         
-                        <div class="bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-300 flex items-center gap-2 flex-1 sm:flex-none justify-center">
-                            <span class="text-xs font-bold text-slate-600">Total: <span id="stat-total" class="text-slate-900 font-black">0</span></span>
+                        <div class="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap">
+                            <div class="bg-slate-100 px-2 py-1.5 rounded-lg border border-slate-300 flex items-center justify-center text-center">
+                                <span class="text-[11px] md:text-xs font-bold text-slate-600">Total: <span id="stat-total" class="text-slate-900 font-black">0</span></span>
+                            </div>
+                            <div class="bg-amber-100 px-2 py-1.5 rounded-lg border border-amber-300 flex items-center justify-center text-center">
+                                <span class="text-[11px] md:text-xs font-bold text-amber-800">Open: <span id="stat-open" class="font-black">0</span></span>
+                            </div>
+                            <!-- Removed hidden classes here so it shows on mobile -->
+                            <div class="bg-emerald-100 px-2 py-1.5 rounded-lg border border-emerald-300 flex items-center justify-center text-center">
+                                <span class="text-[11px] md:text-xs font-bold text-emerald-800">Solved: <span id="stat-resolved" class="font-black">0</span></span>
+                            </div>
                         </div>
-                        <div class="bg-amber-100 px-3 py-1.5 rounded-lg border border-amber-300 flex items-center gap-2 flex-1 sm:flex-none justify-center">
-                            <span class="text-xs font-bold text-amber-800">Open: <span id="stat-open" class="font-black">0</span></span>
-                        </div>
-                        <div class="bg-emerald-100 px-3 py-1.5 rounded-lg border border-emerald-300 flex items-center gap-2 flex-1 sm:flex-none justify-center hidden sm:flex">
-                            <span class="text-xs font-bold text-emerald-800">Resolved: <span id="stat-resolved" class="font-black">0</span></span>
-                        </div>
+
                     </div>
                 </div>
 
@@ -229,7 +235,7 @@
             
             list.innerHTML = '';
             if(openTickets.length === 0) {
-                list.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs font-bold">No new requests right now!</div>';
+                list.innerHTML = '<div class="p-6 text-center text-slate-400 text-xs font-bold">No new requests right now! 🎉</div>';
                 return;
             }
             
@@ -439,7 +445,6 @@
                 const desc = t.description || t.desc || "No description provided"; 
                 const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 
-                // HEADER COLORS FOR ABSOLUTE CLARITY
                 let headerColor = 'bg-slate-100 border-slate-300 text-slate-800';
                 let sColor = 'bg-slate-50 border-slate-300 text-slate-700';
                 
@@ -478,9 +483,8 @@
                     `;
                 }
 
-                // THE COMPLETELY ISOLATED, RIGID TICKET CARD
                 list.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-md border-2 border-slate-300 mb-8 overflow-hidden flex flex-col transform transition hover:shadow-lg">
+                    <div class="bg-white rounded-2xl shadow-md border-2 border-slate-300 mb-8 overflow-hidden flex flex-col transform transition hover:shadow-lg mx-1 md:mx-0">
                         
                         <!-- DISTINCT TICKET HEADER -->
                         <div class="${headerColor} px-4 lg:px-6 py-3 md:py-4 flex justify-between items-center border-b-2">
@@ -494,10 +498,9 @@
                             </div>
                         </div>
                         
-                        <!-- TICKET BODY (Rigid Columns) -->
+                        <!-- TICKET BODY -->
                         <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
                             
-                            <!-- Col 1: User Details -->
                             <div class="col-span-1 lg:col-span-3 p-5 lg:p-6 flex flex-col bg-white">
                                 <div class="flex items-center gap-4 mb-4">
                                     <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-black text-slate-500 text-xl border-2 border-slate-200 shadow-inner flex-shrink-0">${initials}</div>
@@ -513,7 +516,6 @@
                                 </div>
                             </div>
 
-                            <!-- Col 2: The Problem -->
                             <div class="col-span-1 lg:col-span-4 p-5 lg:p-6 bg-slate-50/50 flex flex-col">
                                 <p class="text-[10px] uppercase font-black text-slate-400 mb-1.5 tracking-widest">Category</p>
                                 <p class="font-black text-slate-800 text-sm mb-4 bg-white p-2 rounded-lg border border-slate-200 inline-block w-max shadow-sm">${t.category}</p>
@@ -526,7 +528,6 @@
                                 </div>
                             </div>
 
-                            <!-- Col 3: Controls -->
                             <div class="col-span-1 lg:col-span-2 p-5 lg:p-6 flex flex-col justify-start gap-5 bg-white">
                                 <div>
                                     <label class="text-[10px] uppercase font-black text-slate-400 mb-2 block tracking-widest">Change Status</label>
@@ -543,7 +544,6 @@
                                 </div>
                             </div>
 
-                            <!-- Col 4: Note Editor -->
                             <div class="col-span-1 lg:col-span-3 p-5 lg:p-6 bg-slate-50 flex flex-col h-full">
                                 <label class="text-[10px] uppercase font-black text-slate-400 mb-2 block tracking-widest">Resolution Notes</label>
                                 <textarea id="sol-${t.id}" placeholder="Type solution here..." class="flex-1 w-full p-4 rounded-xl border-2 border-slate-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 outline-none resize-none text-[16px] md:text-sm font-semibold text-slate-700 shadow-sm min-h-[120px] mb-4">${t.solution || ''}</textarea>
