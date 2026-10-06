@@ -77,6 +77,11 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zm10 0a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg>
                         Helpdesk Queue
                     </button>
+                    <!-- EXPORT BUTTON ADDED HERE -->
+                    <button onclick="window.exportToCSV()" class="w-full flex items-center gap-3 px-4 py-3 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-bold transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Export to CSV
+                    </button>
                 </div>
 
                 <div class="px-4 mt-8">
@@ -144,17 +149,29 @@
 
                         <select id="dept-filter" onchange="window.filterByDept(this.value)" class="w-full sm:w-auto bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 md:py-2.5 text-[16px] md:text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer font-bold text-slate-700">
                             <option value="All">All Departments</option>
-                            <option value="Human Resources">HR</option>
-                            <option value="Admin">Admin</option>
-                            <option value="Information Technology">IT</option>
-                            <option value="Accounting">Accounting</option>
-                            <option value="Design">Design</option>
-                            <option value="Executive / Management">Exec</option>
-                            <option value="Other">Other</option>
+                            <option value="Human Resources">Human Resources</option>
+                                <option value="Admin">Admin</option>
+                                <option value="Account">Account</option>
+                                <option value="Information Technology">Information Technology</option>
+                                <option value="Store*">Store*</option>
+                                <option value="Design">Design</option>
+                                <option value="Safety">Safety</option>
+                                <option value="Civil">Civil</option>
+                                <option value="Survey">Survey</option>
+                                <option value="P&M">P&M</option>
+                                <option value="Planning">Planning</option>
+                                <option value="Billing">Billing</option>
+                                <option value="DC">DC</option>
+                                <option value="QA/QC">QA/QC</option>
+                                <option value="MEP">MEP</option>
+                                <option value="Electrical">Electrical</option>
+                                <option value="Instrumentation">Instrumentation</option>
+                                <option value="Executive / Management">Executive / Management</option>
+                                <option value="Other">Other</option>
                         </select>
                     </div>
 
-                    <!-- METRICS BADGES (FIXED VISIBILITY FOR MOBILE) -->
+                    <!-- METRICS BADGES (CLICKABLE FILTERS) -->
                     <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
                         
                         <div id="active-date-badge" class="hidden bg-indigo-600 text-white px-3 py-2 rounded-lg border border-indigo-700 items-center justify-between shadow-sm w-full sm:w-auto">
@@ -163,14 +180,13 @@
                         </div>
                         
                         <div class="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap">
-                            <div class="bg-slate-100 px-2 py-1.5 rounded-lg border border-slate-300 flex items-center justify-center text-center">
+                            <div id="btn-filter-all" onclick="window.filterByStatus('All')" class="cursor-pointer transition-all hover:bg-slate-200 bg-slate-100 px-2 py-1.5 rounded-lg border border-slate-300 flex items-center justify-center text-center">
                                 <span class="text-[11px] md:text-xs font-bold text-slate-600">Total: <span id="stat-total" class="text-slate-900 font-black">0</span></span>
                             </div>
-                            <div class="bg-amber-100 px-2 py-1.5 rounded-lg border border-amber-300 flex items-center justify-center text-center">
+                            <div id="btn-filter-open" onclick="window.filterByStatus('Open')" class="cursor-pointer transition-all hover:bg-amber-200 bg-amber-100 px-2 py-1.5 rounded-lg border border-amber-300 flex items-center justify-center text-center">
                                 <span class="text-[11px] md:text-xs font-bold text-amber-800">Open: <span id="stat-open" class="font-black">0</span></span>
                             </div>
-                            <!-- Removed hidden classes here so it shows on mobile -->
-                            <div class="bg-emerald-100 px-2 py-1.5 rounded-lg border border-emerald-300 flex items-center justify-center text-center">
+                            <div id="btn-filter-resolved" onclick="window.filterByStatus('Resolved')" class="cursor-pointer transition-all hover:bg-emerald-200 bg-emerald-100 px-2 py-1.5 rounded-lg border border-emerald-300 flex items-center justify-center text-center">
                                 <span class="text-[11px] md:text-xs font-bold text-emerald-800">Solved: <span id="stat-resolved" class="font-black">0</span></span>
                             </div>
                         </div>
@@ -203,6 +219,10 @@
         window.tickets = [];
         window.searchQuery = "";
         window.currentDeptFilter = "All"; 
+        
+        // NEW STATUS FILTER STATE
+        window.currentStatusFilter = "All";
+        window.currentFilteredTickets = []; // for export
         
         let calDate = new Date();
         window.currentDateFilter = null; 
@@ -256,6 +276,7 @@
             window.toggleNotifications();
             window.filterByDate(null); 
             window.currentDeptFilter = "All";
+            window.currentStatusFilter = "All";
             document.getElementById('dept-filter').value = "All";
             
             const searchBox = document.getElementById('search-input');
@@ -322,6 +343,47 @@
                 const list = document.getElementById('admin-ticket-list');
                 list.innerHTML = `<div class="p-10 text-center text-red-500 font-bold text-sm bg-red-50 rounded-xl m-4 border-2 border-red-200">Database Error: ${error.message}</div>`;
             }
+        };
+
+        // ==========================================
+        // EXPORT FUNCTIONALITY
+        // ==========================================
+        window.exportToCSV = function() {
+            if(!window.currentFilteredTickets || window.currentFilteredTickets.length === 0) {
+                alert("No tickets available to export based on current filters.");
+                return;
+            }
+            
+            const headers = ['Ticket ID', 'Status', 'Date', 'Name', 'Emp ID', 'Department', 'Category', 'Priority', 'Description', 'Solution', 'Assigned Engineer'];
+            
+            const rows = window.currentFilteredTickets.map(t => {
+                const desc = (t.description || t.desc || "").replace(/"/g, '""');
+                const sol = (t.solution || "").replace(/"/g, '""');
+                return [
+                    t.id,
+                    t.status,
+                    t.date || t.created_at || '',
+                    t.name || '',
+                    t.empid || '',
+                    t.dept || '',
+                    t.category || '',
+                    t.priority || 'Normal',
+                    `"${desc}"`,
+                    `"${sol}"`,
+                    t.engineer || 'Unassigned'
+                ].join(',');
+            });
+            
+            const csvContent = headers.join(',') + '\n' + rows.join('\n');
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement("a");
+            link.setAttribute("href", url);
+            link.setAttribute("download", `Helpdesk_Export_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
         };
 
         // ==========================================
@@ -412,12 +474,18 @@
             window.searchQuery = query.toLowerCase();
             window.renderTable();
         };
+        
+        window.filterByStatus = function(status) {
+            window.currentStatusFilter = status;
+            window.renderTable();
+        };
 
         window.renderTable = function() {
             const list = document.getElementById('admin-ticket-list');
             list.innerHTML = '';
             
-            const filteredTickets = window.tickets.filter((t) => {
+            // 1. First filter by Date, Dept, and Search (Pre-Status Filtering for accurate stats)
+            const preStatusFiltered = window.tickets.filter((t) => {
                 const desc = t.description || t.desc || "No description provided"; 
                 if (window.currentDateFilter) {
                     let dStr = t.created_at || t.date;
@@ -432,16 +500,35 @@
                 return true;
             });
 
-            document.getElementById('stat-total').innerText = filteredTickets.length;
-            document.getElementById('stat-open').innerText = filteredTickets.filter(t => t.status === 'Open' || t.status === 'Pending').length;
-            document.getElementById('stat-resolved').innerText = filteredTickets.filter(t => t.status === 'Resolved').length;
+            // Update stats based on pre-status filter so the counters remain stable when you click them
+            document.getElementById('stat-total').innerText = preStatusFiltered.length;
+            document.getElementById('stat-open').innerText = preStatusFiltered.filter(t => t.status === 'Open' || t.status === 'Pending').length;
+            document.getElementById('stat-resolved').innerText = preStatusFiltered.filter(t => t.status === 'Resolved').length;
 
-            if(filteredTickets.length === 0) {
+            // 2. Now apply the Status filter for the actual list rendering
+            const finalFilteredTickets = preStatusFiltered.filter((t) => {
+                if (window.currentStatusFilter === 'Open' && t.status !== 'Open' && t.status !== 'Pending') return false;
+                if (window.currentStatusFilter === 'Resolved' && t.status !== 'Resolved') return false;
+                return true;
+            });
+            
+            window.currentFilteredTickets = finalFilteredTickets; // Save state for CSV Export
+
+            // 3. Visually update the status filter buttons to show which is active without breaking original UI
+            const baseAll = "cursor-pointer transition-all px-2 py-1.5 rounded-lg border flex items-center justify-center text-center bg-slate-100 border-slate-300 hover:bg-slate-200";
+            const baseOpen = "cursor-pointer transition-all px-2 py-1.5 rounded-lg border flex items-center justify-center text-center bg-amber-100 border-amber-300 hover:bg-amber-200";
+            const baseResolved = "cursor-pointer transition-all px-2 py-1.5 rounded-lg border flex items-center justify-center text-center bg-emerald-100 border-emerald-300 hover:bg-emerald-200";
+            
+            document.getElementById('btn-filter-all').className = window.currentStatusFilter === 'All' ? baseAll + " ring-2 ring-slate-400 ring-offset-1" : baseAll;
+            document.getElementById('btn-filter-open').className = window.currentStatusFilter === 'Open' ? baseOpen + " ring-2 ring-amber-400 ring-offset-1" : baseOpen;
+            document.getElementById('btn-filter-resolved').className = window.currentStatusFilter === 'Resolved' ? baseResolved + " ring-2 ring-emerald-400 ring-offset-1" : baseResolved;
+
+            if(finalFilteredTickets.length === 0) {
                 list.innerHTML = `<div class="p-16 text-center text-slate-500 font-bold text-sm bg-white rounded-2xl border-2 border-slate-200 mx-auto max-w-lg mt-10">No tickets found matching your criteria.</div>`;
                 return;
             }
 
-            filteredTickets.forEach((t) => {
+            finalFilteredTickets.forEach((t) => {
                 const desc = t.description || t.desc || "No description provided"; 
                 const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 
