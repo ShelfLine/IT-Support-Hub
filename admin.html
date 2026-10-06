@@ -223,7 +223,7 @@
         window.searchQuery = "";
         window.currentDeptFilter = "All"; 
         window.currentStatusFilter = "All";
-        window.currentSiteFilter = "All"; // NEW SITE FILTER
+        window.currentSiteFilter = "All"; 
         window.currentFilteredTickets = []; 
         
         let calDate = new Date();
@@ -323,34 +323,19 @@
         };
 
         // ==========================================
-        // EXPORT FUNCTIONALITY (FIXED: ALL FIELDS + SAFE CSV)
+        // EXPORT FUNCTIONALITY
         // ==========================================
         window.exportToCSV = function() {
             if(!window.currentFilteredTickets || window.currentFilteredTickets.length === 0) {
                 return alert("No tickets available to export.");
             }
             
-            // Define all headers including Mobile Number and Site
             const headers = ['Ticket ID', 'Status', 'Date Logged', 'Full Name', 'Emp ID', 'Mobile Number', 'Location (Site)', 'Department', 'Category', 'Priority', 'Description', 'Resolution Notes', 'Assigned Engineer'];
             
             const rows = window.currentFilteredTickets.map(t => {
-                // Helper function to safely escape commas and quotes inside text
                 const escapeCsv = (str) => `"${(str || '').toString().replace(/"/g, '""')}"`;
-                
                 return [
-                    escapeCsv(t.id),
-                    escapeCsv(t.status),
-                    escapeCsv(t.date || t.created_at),
-                    escapeCsv(t.name),
-                    escapeCsv(t.empid),
-                    escapeCsv(t.mobile), 
-                    escapeCsv(t.site || 'N/A'),
-                    escapeCsv(t.dept),
-                    escapeCsv(t.category),
-                    escapeCsv(t.priority || 'Normal'),
-                    escapeCsv(t.description || t.desc),
-                    escapeCsv(t.solution),
-                    escapeCsv(t.engineer || 'Unassigned')
+                    escapeCsv(t.id), escapeCsv(t.status), escapeCsv(t.date || t.created_at), escapeCsv(t.name), escapeCsv(t.empid), escapeCsv(t.mobile), escapeCsv(t.site || 'N/A'), escapeCsv(t.dept), escapeCsv(t.category), escapeCsv(t.priority || 'Normal'), escapeCsv(t.description || t.desc), escapeCsv(t.solution), escapeCsv(t.engineer || 'Unassigned')
                 ].join(',');
             });
             
@@ -359,9 +344,7 @@
             const link = document.createElement("a");
             link.href = URL.createObjectURL(blob);
             link.download = `Helpdesk_Export_${new Date().toISOString().split('T')[0]}.csv`;
-            document.body.appendChild(link); 
-            link.click(); 
-            document.body.removeChild(link);
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
         };
 
         // ==========================================
@@ -429,11 +412,9 @@
         window.searchTable = function(query) { window.searchQuery = query.toLowerCase(); window.renderTable(); };
         window.filterByStatus = function(status) { window.currentStatusFilter = status; window.renderTable(); };
         
-        // NEW SITE FILTERING LOGIC
         window.filterBySite = function(site) {
             window.currentSiteFilter = site;
             
-            // Update Sidebar UI
             document.querySelectorAll('.nav-site-btn').forEach(btn => {
                 btn.className = "nav-site-btn w-full text-left px-4 py-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl font-semibold text-sm transition mb-1";
             });
@@ -461,7 +442,7 @@
                     if(isNaN(d) || `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}` !== window.currentDateFilter) return false;
                 }
                 if (window.currentDeptFilter !== "All" && t.dept !== window.currentDeptFilter) return false;
-                if (window.currentSiteFilter !== "All" && t.site !== window.currentSiteFilter) return false; // SITE FILTER CHECK
+                if (window.currentSiteFilter !== "All" && t.site !== window.currentSiteFilter) return false; 
                 if (window.searchQuery && !t.name.toLowerCase().includes(window.searchQuery) && !desc.toLowerCase().includes(window.searchQuery) && !t.id.toLowerCase().includes(window.searchQuery)) return false;
                 return true;
             });
@@ -552,13 +533,13 @@
                                     </div>
                                 </div>
                                 <div class="mt-auto space-y-2">
-                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                                        <p class="text-[9px] uppercase font-bold text-slate-400 mb-1 tracking-wider">Site Location</p>
+                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                                        <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Site Location</p>
                                         <span class="text-xs font-semibold text-slate-700">${siteText}</span>
                                     </div>
-                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200">
-                                        <p class="text-[9px] uppercase font-bold text-slate-400 mb-1 tracking-wider">Priority Level</p>
-                                        <span class="${pColor} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider inline-block">${t.priority || 'Normal'}</span>
+                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
+                                        <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Priority Level</p>
+                                        <span class="${pColor} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${t.priority || 'Normal'}</span>
                                     </div>
                                 </div>
                             </div>
@@ -610,8 +591,31 @@
             });
         };
 
+        // ==========================================
+        // WHATSAPP NOTIFICATION LOGIC
+        // ==========================================
         window.updateStatus = async function(id, newStatus) {
-            try { await supabaseClient.from('tickets').update({ status: newStatus }).eq('id', id); window.loadTickets(); } 
+            try { 
+                await supabaseClient.from('tickets').update({ status: newStatus }).eq('id', id); 
+                
+                const ticket = window.tickets.find(t => t.id === id);
+                if(ticket && confirm(`Status updated to ${newStatus}! Do you want to notify ${ticket.name} via WhatsApp?`)) {
+                    let phone = ticket.mobile ? ticket.mobile.replace(/[^0-9]/g, '') : '';
+                    
+                    // Auto-add +91 if the number is exactly 10 digits (Standard Indian mobile)
+                    if(phone.length === 10) phone = '91' + phone;
+                    
+                    const message = `Hello ${ticket.name},\n\nYour IT Support Ticket (*${id}*) status has been updated to: *${newStatus}*.\n\nBest,\nIT Service Desk`;
+                    
+                    if(phone) {
+                        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+                    } else {
+                        alert("No valid phone number found for this user.");
+                    }
+                }
+                
+                window.loadTickets(); 
+            } 
             catch (e) { alert("Failed to update status: " + e.message); }
         };
 
@@ -628,6 +632,15 @@
                 if(error) throw error;
                 btn.innerText = "Saved!"; btn.classList.replace('bg-indigo-600', 'bg-emerald-600'); btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
                 const t = window.tickets.find(x => x.id === id); if(t) t.solution = text;
+                
+                // Prompt for WhatsApp notification on solution update
+                if(text !== "" && confirm(`Notes saved! Do you want to notify ${t.name} about this update via WhatsApp?`)) {
+                    let phone = t.mobile ? t.mobile.replace(/[^0-9]/g, '') : '';
+                    if(phone.length === 10) phone = '91' + phone;
+                    const message = `Hello ${t.name},\n\nYour IT Support Ticket (*${id}*) has a new note:\n_"${text}"_\n\nBest,\nIT Service Desk`;
+                    if(phone) window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+                }
+
                 setTimeout(() => window.renderTable(), 500);
                 setTimeout(() => { btn.innerText = originalText; btn.classList.replace('bg-emerald-600', 'bg-indigo-600'); btn.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700'); }, 2000);
             } catch (e) { alert("Database Error: " + e.message); btn.innerText = "Error"; btn.classList.replace('bg-indigo-600', 'bg-red-600'); }
