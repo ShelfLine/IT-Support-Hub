@@ -55,12 +55,6 @@
                 <h1 class="text-xl font-bold tracking-tight text-slate-900">Support<span class="text-indigo-600">Hub</span></h1>
             </div>
             <div class="flex items-center gap-4 md:gap-6">
-                <!-- Live Clock -->
-                <div id="live-clock" class="hidden sm:flex flex-col items-end text-right border-r border-slate-200 pr-4 md:pr-6">
-                    <span id="clock-time" class="text-sm font-bold text-slate-800"></span>
-                    <span id="clock-date" class="text-[10px] font-semibold text-slate-500 uppercase tracking-wide"></span>
-                </div>
-                
                 <button onclick="window.switchView('track-view')" class="text-sm font-semibold text-indigo-700 bg-indigo-50 border border-indigo-100 px-4 py-2 md:px-5 md:py-2.5 rounded-xl hover:bg-indigo-600 hover:text-white transition-all duration-300 shadow-sm hover:shadow">Track Ticket</button>
                 <a href="admin.html" class="text-sm font-semibold text-slate-400 hover:text-slate-600 transition-colors hidden sm:block">Admin</a>
             </div>
@@ -545,24 +539,7 @@
             }, 300); 
         }, 10000); 
 
-        // --- Live Clock Logic ---
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit', hour12: true });
-            const dateString = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
-            
-            const timeEl = document.getElementById('clock-time');
-            const dateEl = document.getElementById('clock-date');
-            
-            if (timeEl && dateEl) {
-                timeEl.innerText = timeString;
-                dateEl.innerText = dateString;
-            }
-        }
-        setInterval(updateClock, 1000); // Update every second
-
         window.onload = function() { 
-            updateClock(); // Initialize clock immediately
             window.showHome(); 
             const lastTicket = localStorage.getItem('last_ticket_id');
             if(lastTicket) window.setupRealtimeListener(lastTicket);
