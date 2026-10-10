@@ -48,18 +48,6 @@
 </head>
 <body class="min-h-screen flex flex-col relative overflow-x-hidden">
 
-    <!-- REAL-TIME GREETING POPUP TOAST -->
-    <div id="greeting-toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] bg-white/95 backdrop-blur-md px-6 py-4 rounded-2xl premium-shadow border border-slate-200 flex items-center gap-4 transition-all duration-700 opacity-0 -translate-y-10 w-max max-w-[90vw]">
-        <div id="greeting-icon" class="text-3xl">👋</div>
-        <div>
-            <h3 id="greeting-text" class="text-lg font-extrabold text-slate-900 tracking-tight">Welcome</h3>
-            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">IT Support Hub</p>
-        </div>
-        <button onclick="document.getElementById('greeting-toast').classList.replace('opacity-100', 'opacity-0'); document.getElementById('greeting-toast').classList.add('-translate-y-10');" class="ml-4 text-slate-400 hover:text-slate-600 transition-colors">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </button>
-    </div>
-
     <div class="sticky top-0 z-50 glass-nav">
         <nav class="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer group" onclick="window.showHome()">
@@ -78,6 +66,11 @@
         <div id="home-view" class="view active">
             <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
                 <div class="max-w-2xl">
+                    <!-- Inline Real-time Greeting -->
+                    <p class="text-indigo-600 font-bold tracking-wide uppercase text-sm mb-3 flex items-center gap-2">
+                        <span id="inline-greeting-icon" class="text-lg">👋</span> 
+                        <span id="inline-greeting-text">Welcome</span>
+                    </p>
                     <h2 class="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">How can we help you?</h2>
                     <p class="text-lg text-slate-500 font-medium leading-relaxed">Select a category below to securely submit a request to the IT Service Desk.</p>
                 </div>
@@ -604,47 +597,31 @@
             }
         };
 
-        // NEW Real-time Greeting Logic
+        // NEW Inline Real-time Greeting Logic
         window.showGreeting = function() {
             const hour = new Date().getHours();
             let greeting = "Welcome";
             let icon = "👋";
 
-            // Determine time of day
             if (hour >= 5 && hour < 12) {
-                greeting = "Good Morning!";
+                greeting = "Good Morning";
                 icon = "🌅";
             } else if (hour >= 12 && hour < 17) {
-                greeting = "Good Afternoon!";
+                greeting = "Good Afternoon";
                 icon = "☀️";
             } else {
-                greeting = "Good Evening!";
+                greeting = "Good Evening";
                 icon = "🌙";
             }
 
-            // Update HTML
-            document.getElementById('greeting-text').innerText = greeting;
-            document.getElementById('greeting-icon').innerText = icon;
-
-            const toast = document.getElementById('greeting-toast');
-            
-            // Slide it in shortly after page loads
-            setTimeout(() => {
-                toast.classList.remove('opacity-0', '-translate-y-10');
-                toast.classList.add('opacity-100', 'translate-y-0');
-            }, 600);
-
-            // Hide it automatically after 4 seconds
-            setTimeout(() => {
-                toast.classList.remove('opacity-100', 'translate-y-0');
-                toast.classList.add('opacity-0', '-translate-y-10');
-            }, 4600);
+            document.getElementById('inline-greeting-text').innerText = greeting;
+            document.getElementById('inline-greeting-icon').innerText = icon;
         };
 
         window.onload = function() { 
             window.showHome(); 
             window.checkTeamAvailability();
-            window.showGreeting(); // Call the greeting popup
+            window.showGreeting(); 
             
             const lastTicket = localStorage.getItem('last_ticket_id');
             if(lastTicket) window.setupRealtimeListener(lastTicket);
