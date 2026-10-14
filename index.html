@@ -410,36 +410,7 @@
                 const { error } = await supabaseClient.from('tickets').insert([newTicket]);
                 if(error) throw error;
 
-                // --- TELEGRAM NOTIFICATION CODE START ---
-                const telegramBotToken = '8781092464:AAG7OR9RlwcsgfJViSfLjn-ocx648jvKplQ'; // Replace with your Bot Token
-                const telegramChatId = '1300215490';     // Replace with your Chat ID
-
-                // Using HTML tags instead of Markdown asterisks to prevent parsing crashes
-                const telegramMessage = `🚨 <b>New Support Ticket: ${ticketId}</b>\n\n` +
-                                      `👤 <b>Name:</b> ${newTicket.name} (${newTicket.empid})\n` +
-                                      `🏢 <b>Site:</b> ${newTicket.site} | <b>Dept:</b> ${newTicket.dept}\n` +
-                                      `📱 <b>Mobile:</b> ${newTicket.mobile}\n` +
-                                      `🔥 <b>Priority:</b> ${newTicket.priority}\n` +
-                                      `📁 <b>Category:</b> ${newTicket.category}\n\n` +
-                                      `📝 <b>Description:</b>\n${newTicket.description}`;
-
-                fetch(`https://api.telegram.org/bot${telegramBotToken}/sendMessage`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        chat_id: telegramChatId,
-                        text: telegramMessage,
-                        parse_mode: 'HTML' // Changed to HTML
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    // This will print the exact reason to your browser's console if it fails
-                    if (!data.ok) console.error("Telegram API Rejected the Message:", data.description);
-                })
-                .catch(err => console.error("Telegram Network Error:", err));
-                // --- TELEGRAM NOTIFICATION CODE END ---
-
+                // Only local UI and Supabase functionality remains. Telegram runs on the backend now.
                 localStorage.setItem('last_user_details', JSON.stringify({
                     name: newTicket.name, dept: newTicket.dept, site: newTicket.site, mobile: newTicket.mobile, empid: newTicket.empid
                 }));
