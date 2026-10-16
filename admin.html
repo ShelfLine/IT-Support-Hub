@@ -18,7 +18,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; background-color: #f1f5f9; min-height: 100vh; display: flex; flex-direction: column; }
+        body { font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; background-color: #f8fafc; min-height: 100vh; display: flex; flex-direction: column; }
         .view { display: none; opacity: 0; transition: opacity 0.3s ease; }
         .view.active { display: flex; opacity: 1; }
         ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -38,18 +38,18 @@
         <div class="blob bg-purple-600 w-72 h-72 rounded-full bottom-0 -right-10" style="animation-delay: -5s;"></div>
 
         <div class="dark-glass max-w-md w-full p-8 md:p-10 text-center rounded-3xl shadow-2xl relative z-10 mx-auto my-auto">
-            <div class="w-16 h-16 bg-indigo-600 text-white rounded-2xl flex items-center justify-center text-2xl font-black mx-auto mb-6 shadow-lg">IT</div>
+            <div class="w-16 h-16 bg-gradient-to-tr from-indigo-600 to-violet-500 text-white rounded-2xl flex items-center justify-center text-xl font-black mx-auto mb-6 shadow-xl border border-white/20">IT</div>
             <h2 class="text-2xl md:text-3xl font-bold mb-2 text-white tracking-tight">Admin Portal</h2>
             <p class="text-slate-400 mb-8 text-sm font-medium">Secure access to the service desk.</p>
             
             <form onsubmit="window.loginAdmin(event)" class="space-y-4">
                 <div><input type="email" id="admin-email" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 rounded-xl text-sm font-medium focus:outline-none focus:border-indigo-500 placeholder-slate-500 transition-colors" placeholder="admin@company.com" required></div>
                 <div><input type="password" id="admin-pwd" class="w-full bg-slate-900/50 border border-slate-700 text-white px-5 py-3.5 rounded-xl text-sm font-medium tracking-widest focus:outline-none focus:border-indigo-500 placeholder-slate-500 transition-colors" placeholder="••••••••" required></div>
-                <button id="login-btn" type="submit" class="w-full bg-white text-slate-900 px-6 py-3.5 rounded-xl font-bold text-sm hover:bg-slate-100 transition-all shadow-lg mt-2">Authenticate</button>
+                <button id="login-btn" type="submit" class="w-full bg-indigo-600 text-white px-6 py-3.5 rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-indigo-500 transition-all shadow-lg shadow-indigo-600/30 mt-2">Authenticate Access</button>
             </form>
             
-            <p id="login-err" class="text-red-400 text-sm mt-5 font-bold hidden bg-red-400/10 py-2 rounded-lg border border-red-400/20">Invalid credentials.</p>
-            <div class="mt-8"><a href="index.html" class="text-slate-500 text-sm font-semibold hover:text-white transition">&larr; Back to User Site</a></div>
+            <p id="login-err" class="text-red-400 text-xs mt-5 font-bold hidden bg-red-400/10 py-2.5 rounded-xl border border-red-400/20 text-center"></p>
+            <div class="mt-8"><a href="index.html" class="text-xs font-semibold text-slate-400 hover:text-white transition">&larr; Back to User Site</a></div>
         </div>
     </div>
 
@@ -124,7 +124,7 @@
                         <span id="notif-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold flex items-center justify-center rounded-full hidden">0</span>
                         🔔
                     </button>
-                    <div id="notif-dropdown" class="absolute right-0 mt-3 w-[280px] bg-white border border-slate-200 shadow-2xl rounded-xl hidden z-50 overflow-hidden">
+                    <div id="notif-dropdown" class="absolute right-0 mt-3 w-[280px] bg-white border border-slate-200 shadow-2xl rounded-2xl hidden z-50 overflow-hidden">
                         <div class="px-4 py-3 border-b border-slate-100 flex justify-between items-center bg-slate-50">
                             <h3 class="font-bold text-slate-800 text-[10px] uppercase tracking-wider">Action Required</h3>
                             <button onclick="window.toggleNotifications()" class="text-slate-400 hover:text-slate-800 text-lg leading-none">&times;</button>
@@ -136,19 +136,19 @@
 
             <div class="flex-1 flex flex-col p-4 md:p-6 gap-5 w-full max-w-7xl mx-auto">
                 
-                <!-- BOLD Category Count Cards (Stacked nicely for mobile) -->
+                <!-- BOLD Category Count Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3" id="category-tabs-bar">
                     <!-- Populated dynamically via JS -->
                 </div>
 
                 <!-- Filter Bar & Search ID -->
-                <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+                <div class="flex flex-col lg:flex-row justify-between items-stretch lg:items-center gap-3 bg-white p-4 rounded-2xl border border-slate-300 shadow-sm">
                     <div class="flex flex-col sm:flex-row gap-3 flex-1 w-full lg:w-auto">
                         <div class="relative flex-1 min-w-[200px]">
-                            <input type="text" oninput="window.searchTable(this.value)" id="search-input" placeholder="Search ID, name, issue..." class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition font-medium shadow-sm">
+                            <input type="text" oninput="window.searchTable(this.value)" id="search-input" placeholder="Search ID, name, issue..." class="w-full bg-slate-50 border border-slate-300 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 focus:bg-white transition font-medium shadow-sm">
                         </div>
 
-                        <select id="dept-filter" onchange="window.filterByDept(this.value)" class="w-full sm:w-auto bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer font-semibold text-slate-700 shadow-sm">
+                        <select id="dept-filter" onchange="window.filterByDept(this.value)" class="w-full sm:w-auto bg-slate-50 border border-slate-300 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition cursor-pointer font-semibold text-slate-700 shadow-sm">
                             <option value="All">All Departments</option>
                             <option value="Human Resources">Human Resources</option>
                             <option value="Admin">Admin</option>
@@ -179,27 +179,115 @@
                         </div>
                         
                         <div class="grid grid-cols-3 gap-2 w-full sm:w-auto sm:flex sm:flex-wrap">
-                            <div id="btn-filter-all" onclick="window.filterByStatus('All')" class="cursor-pointer transition-all hover:bg-slate-200 bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-200 flex items-center justify-center text-center shadow-sm">
+                            <div id="btn-filter-all" onclick="window.filterByStatus('All')" class="cursor-pointer transition-all hover:bg-slate-200 bg-slate-100 px-3.5 py-2 rounded-xl border border-slate-300 flex items-center justify-center text-center shadow-sm">
                                 <span class="text-xs font-bold text-slate-700">Total: <span id="stat-total" class="text-slate-900">0</span></span>
                             </div>
-                            <div id="btn-filter-open" onclick="window.filterByStatus('Open')" class="cursor-pointer transition-all hover:bg-amber-100 bg-amber-50 px-3.5 py-2 rounded-xl border border-amber-200 flex items-center justify-center text-center shadow-sm">
+                            <div id="btn-filter-open" onclick="window.filterByStatus('Open')" class="cursor-pointer transition-all hover:bg-amber-100 bg-amber-50 px-3.5 py-2 rounded-xl border border-amber-300 flex items-center justify-center text-center shadow-sm">
                                 <span class="text-xs font-bold text-amber-800">Open: <span id="stat-open">0</span></span>
                             </div>
-                            <div id="btn-filter-resolved" onclick="window.filterByStatus('Resolved')" class="cursor-pointer transition-all hover:bg-emerald-100 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-200 flex items-center justify-center text-center shadow-sm">
+                            <div id="btn-filter-resolved" onclick="window.filterByStatus('Resolved')" class="cursor-pointer transition-all hover:bg-emerald-100 bg-emerald-50 px-3.5 py-2 rounded-xl border border-emerald-300 flex items-center justify-center text-center shadow-sm">
                                 <span class="text-xs font-bold text-emerald-800">Solved: <span id="stat-resolved">0</span></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- TICKET CARDS LIST -->
-                <div id="admin-ticket-list" class="space-y-6 pb-16">
-                    <div class="p-12 text-center bg-white border border-slate-200 rounded-2xl mx-auto max-w-sm mt-6 shadow-sm">
-                        <div class="inline-flex text-indigo-600 font-bold text-sm animate-pulse">Syncing Database...</div>
+                <!-- CLEAN PROFESSIONAL TABLE VIEW -->
+                <div class="bg-white rounded-2xl border-2 border-slate-300 shadow-sm overflow-hidden mb-16">
+                    <div class="overflow-x-auto scroll-area">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-slate-100 border-b border-slate-300 text-[11px] font-extrabold text-slate-600 uppercase tracking-wider">
+                                    <th class="py-3.5 px-4">Ticket & Date</th>
+                                    <th class="py-3.5 px-4">User Details</th>
+                                    <th class="py-3.5 px-4">Problem / Issue</th>
+                                    <th class="py-3.5 px-4">Status & Agent</th>
+                                    <th class="py-3.5 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="admin-ticket-table-body" class="divide-y divide-slate-200 text-sm">
+                                <tr>
+                                    <td colspan="5" class="p-8 text-center text-slate-500 font-semibold">Syncing Database...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
+
             </div>
         </main>
+    </div>
+
+    <!-- TICKET DETAIL MODAL FOR EDITING -->
+    <div id="ticket-modal" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-xl w-full p-6 md:p-8 relative overflow-hidden border-2 border-slate-300">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-200 pb-3">
+                <div class="flex items-center gap-3">
+                    <h3 id="modal-ticket-id" class="font-black text-xl text-slate-900 font-mono">#TKT-0000</h3>
+                    <span id="modal-ticket-status-badge"></span>
+                </div>
+                <button onclick="window.closeModal()" class="text-slate-400 hover:text-slate-700 text-2xl font-bold">&times;</button>
+            </div>
+            
+            <div class="space-y-4 max-h-[70vh] overflow-y-auto scroll-area pr-1">
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Full Name</p>
+                        <p id="modal-name" class="text-xs font-bold text-slate-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Department</p>
+                        <p id="modal-dept" class="text-xs font-bold text-slate-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Site Location</p>
+                        <p id="modal-site" class="text-xs font-bold text-slate-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Mobile Number</p>
+                        <p id="modal-mobile" class="text-xs font-bold text-slate-800"></p>
+                    </div>
+                </div>
+
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Category & Priority</p>
+                    <p id="modal-category" class="text-xs font-semibold text-slate-700 bg-slate-100 px-3 py-1.5 rounded-xl inline-block"></p>
+                </div>
+
+                <div>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Problem Description</p>
+                    <div id="modal-desc" class="text-xs text-slate-700 bg-slate-50 p-3.5 rounded-xl border border-slate-200 whitespace-pre-wrap"></div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <div>
+                        <label class="text-[10px] font-extrabold text-slate-600 uppercase tracking-wider mb-1 block">Update Status</label>
+                        <select id="modal-status-select" class="w-full p-3 rounded-xl font-bold text-xs border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="Open">Open</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-extrabold text-slate-600 uppercase tracking-wider mb-1 block">Assign Agent</label>
+                        <input type="text" id="modal-engineer-input" placeholder="Agent name..." class="w-full border border-slate-300 bg-white rounded-xl p-3 text-xs font-bold text-slate-800 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="text-[10px] font-extrabold text-slate-600 uppercase tracking-wider mb-1 block">Resolution Notes</label>
+                    <textarea id="modal-solution-textarea" rows="3" placeholder="Type resolution notes here..." class="w-full p-3 rounded-xl border border-slate-300 focus:outline-none text-xs text-slate-800 bg-white"></textarea>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-3 pt-4 mt-4 border-t border-slate-200">
+                <button onclick="window.deleteActiveModalTicket()" class="px-4 py-2.5 bg-red-50 text-red-600 border border-red-200 rounded-xl font-bold text-xs hover:bg-red-100 transition">Delete</button>
+                <div class="flex gap-2">
+                    <div id="modal-whatsapp-container"></div>
+                    <button onclick="window.saveActiveModalTicket()" class="px-5 py-2.5 bg-indigo-600 text-white rounded-xl font-bold text-xs uppercase tracking-wider hover:bg-indigo-700 transition shadow-md shadow-indigo-600/20">Save Changes</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -217,9 +305,13 @@
         window.currentSiteFilter = "All"; 
         window.currentCategoryFilter = "All"; 
         window.currentFilteredTickets = []; 
+        let activeModalTicketId = null;
         
         let calDate = new Date();
         window.currentDateFilter = null; 
+
+        // Official WhatsApp SVG Icon Helper
+        const whatsappSvgIcon = `<svg class="w-4 h-4 text-emerald-600 inline-block flex-shrink-0" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>`;
 
         window.toggleSidebar = function() {
             const sidebar = document.getElementById('sidebar');
@@ -287,7 +379,7 @@
                 email: document.getElementById('admin-email').value.trim(), 
                 password: document.getElementById('admin-pwd').value 
             });
-            if (error) { errDiv.innerText = error.message; errDiv.classList.remove('hidden'); btn.innerText = "Authenticate"; btn.disabled = false; } 
+            if (error) { errDiv.innerText = error.message; errDiv.classList.remove('hidden'); btn.innerText = "Authenticate Access"; btn.disabled = false; } 
             else window.showDashboard();
         };
         
@@ -312,7 +404,7 @@
                 window.renderCategoryTabs(); 
                 window.renderTable(); 
             } catch (error) {
-                document.getElementById('admin-ticket-list').innerHTML = `<div class="p-6 text-center text-red-600 text-sm bg-red-50 rounded-xl m-4">Database Error: ${error.message}</div>`;
+                document.getElementById('admin-ticket-table-body').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-red-600 text-sm">Database Error: ${error.message}</td></tr>`;
             }
         };
 
@@ -436,23 +528,23 @@
                 const isActive = window.currentCategoryFilter === cat;
                 const cardClass = isActive 
                     ? 'bg-indigo-600 text-white shadow-lg ring-2 ring-indigo-400 scale-[1.02]' 
-                    : 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 shadow-sm';
+                    : 'bg-white text-slate-800 hover:bg-slate-50 border border-slate-300 shadow-sm';
 
                 bar.innerHTML += `
                     <div onclick="window.filterByCategory('${cat}')" class="cursor-pointer transition-all duration-200 p-3.5 rounded-2xl flex items-center justify-between ${cardClass}">
                         <div class="flex items-center gap-2.5 overflow-hidden">
-                            <span class="text-xl">${icon}</span>
+                            <span class="text-xl flex-shrink-0">${icon}</span>
                             <span class="text-xs font-bold tracking-tight truncate">${cat}</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded-lg text-xs font-extrabold ${isActive ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-700'}">${count}</span>
+                        <span class="px-2 py-0.5 rounded-lg text-xs font-extrabold flex-shrink-0 ${isActive ? 'bg-indigo-700 text-white' : 'bg-slate-100 text-slate-800'}">${count}</span>
                     </div>
                 `;
             });
         };
 
         window.renderTable = function() {
-            const list = document.getElementById('admin-ticket-list');
-            list.innerHTML = '';
+            const tbody = document.getElementById('admin-ticket-table-body');
+            tbody.innerHTML = '';
             
             const preStatusFiltered = window.tickets.filter((t) => {
                 const desc = t.description || t.desc || ""; 
@@ -479,137 +571,145 @@
             
             window.currentFilteredTickets = finalFilteredTickets; 
 
-            const baseAll = "cursor-pointer transition-all px-3 py-1.5 rounded-lg border flex items-center justify-center text-center bg-slate-100 border-slate-200 hover:bg-slate-200";
-            const baseOpen = "cursor-pointer transition-all px-3 py-1.5 rounded-lg border flex items-center justify-center text-center bg-amber-50 border-amber-200 hover:bg-amber-100";
-            const baseResolved = "cursor-pointer transition-all px-3 py-1.5 rounded-lg border flex items-center justify-center text-center bg-emerald-50 border-emerald-200 hover:bg-emerald-100";
+            const baseAll = "cursor-pointer transition-all px-3.5 py-2 rounded-xl border flex items-center justify-center text-center bg-slate-100 border-slate-300 hover:bg-slate-200";
+            const baseOpen = "cursor-pointer transition-all px-3.5 py-2 rounded-xl border flex items-center justify-center text-center bg-amber-50 border-amber-300 hover:bg-amber-100";
+            const baseResolved = "cursor-pointer transition-all px-3.5 py-2 rounded-xl border flex items-center justify-center text-center bg-emerald-50 border-emerald-300 hover:bg-emerald-100";
             
-            document.getElementById('btn-filter-all').className = window.currentStatusFilter === 'All' ? baseAll + " ring-1 ring-slate-400" : baseAll;
-            document.getElementById('btn-filter-open').className = window.currentStatusFilter === 'Open' ? baseOpen + " ring-1 ring-amber-400" : baseOpen;
-            document.getElementById('btn-filter-resolved').className = window.currentStatusFilter === 'Resolved' ? baseResolved + " ring-1 ring-emerald-400" : baseResolved;
+            document.getElementById('btn-filter-all').className = window.currentStatusFilter === 'All' ? baseAll + " ring-2 ring-slate-400" : baseAll;
+            document.getElementById('btn-filter-open').className = window.currentStatusFilter === 'Open' ? baseOpen + " ring-2 ring-amber-400" : baseOpen;
+            document.getElementById('btn-filter-resolved').className = window.currentStatusFilter === 'Resolved' ? baseResolved + " ring-2 ring-emerald-400" : baseResolved;
 
             if(finalFilteredTickets.length === 0) {
-                list.innerHTML = `<div class="p-10 text-center text-slate-500 font-medium text-sm bg-white rounded-xl border border-slate-200 shadow-sm mx-auto mt-6">No tickets found.</div>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-12 text-center text-slate-500 font-semibold text-sm">No tickets found.</td></tr>`;
                 return;
             }
 
             finalFilteredTickets.forEach((t) => {
-                const desc = t.description || t.desc || "No description provided"; 
+                const desc = t.description || t.desc || "No description provided";
                 const initials = t.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
                 
-                let sColor = 'bg-slate-50 border-slate-200 text-slate-700';
-                let statusBadge = `<span class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
-                
-                if(t.status === 'Resolved') {
-                    sColor = 'bg-emerald-50 border-emerald-200 text-emerald-700';
-                    statusBadge = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
-                }
-                else if(t.status === 'Pending') {
-                    sColor = 'bg-amber-50 border-amber-200 text-amber-700';
-                    statusBadge = `<span class="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
-                }
-
-                let pColor = 'bg-blue-50 text-blue-700 border border-blue-200';
-                if (t.priority === 'Critical') pColor = 'bg-red-50 text-red-700 border border-red-200';
-                else if (t.priority === 'High') pColor = 'bg-orange-50 text-orange-700 border border-orange-200';
-                else if (t.priority === 'Low') pColor = 'bg-slate-100 text-slate-600 border border-slate-200';
+                let statusBadge = `<span class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
+                if(t.status === 'Resolved') statusBadge = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
+                if(t.status === 'Pending') statusBadge = `<span class="bg-amber-50 text-amber-700 border border-amber-200 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${t.status}</span>`;
 
                 let displayDate = t.date;
-                try { let d = new Date(t.created_at || t.date); if(!isNaN(d)) displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch(e) {}
-
-                let solutionDisplay = `<p class="text-[11px] text-amber-600 font-semibold italic mt-3 bg-amber-50 border border-amber-100 px-3 py-1.5 rounded-lg w-max">Pending Solution...</p>`;
-                if(t.solution && t.solution.trim() !== '') {
-                    solutionDisplay = `
-                        <div class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl relative">
-                            <span class="absolute -top-2.5 left-4 bg-white text-slate-600 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border border-slate-200">Notes</span>
-                            <p class="text-sm text-slate-700 mt-1 whitespace-pre-wrap">${t.solution}</p>
-                        </div>`;
-                }
-
-                const siteText = t.site || 'Site Unknown';
+                try { let d = new Date(t.created_at || t.date); if(!isNaN(d)) displayDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }); } catch(e) {}
 
                 let cleanPhone = (t.mobile || '').replace(/\D/g, '');
                 if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
-                const waMessage = encodeURIComponent(`Hello ${t.name}, regarding your IT support ticket #${t.id}: Your request has been updated. Status: ${t.status}. Notes: ${t.solution || 'Resolved'}`);
+                const waMessage = encodeURIComponent(`Dear ${t.name}, this is an automated update from the IT Support Hub. Ticket #${t.id} is now ${t.status}. Details: ${t.solution || 'Resolved'}.`);
                 const whatsappBtn = cleanPhone ? `
-                    <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" title="Chat on WhatsApp" class="px-3 py-2 bg-emerald-50 border border-emerald-200 text-emerald-700 hover:bg-emerald-100 rounded-lg transition font-bold flex items-center justify-center gap-1.5 text-xs">
-                        <span>💬 WhatsApp</span>
+                    <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" title="Chat on WhatsApp" class="p-2 bg-emerald-50 border border-emerald-300 text-emerald-800 hover:bg-emerald-100 rounded-lg transition font-bold flex items-center justify-center gap-1 text-xs">
+                        ${whatsappSvgIcon}
                     </a>
                 ` : '';
 
-                list.innerHTML += `
-                    <div class="bg-white rounded-2xl shadow-sm border border-slate-200 mb-6 flex flex-col overflow-hidden">
-                        <div class="px-5 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                            <div class="flex items-center gap-3">
-                                <span class="font-extrabold text-lg text-slate-900">#${t.id}</span>
-                                ${statusBadge}
-                            </div>
-                            <div class="text-right hidden sm:block">
-                                <span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider block mb-0.5">Logged</span>
-                                <span class="text-xs font-semibold text-slate-700">${displayDate}</span>
-                            </div>
-                        </div>
-                        
-                        <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
-                            <div class="col-span-1 lg:col-span-3 p-5 flex flex-col">
-                                <div class="flex items-center gap-3 mb-4">
-                                    <div class="w-10 h-10 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm border border-indigo-100">${initials}</div>
-                                    <div class="overflow-hidden">
-                                        <p class="font-bold text-slate-900 text-sm truncate">${t.name}</p>
-                                        <p class="text-[11px] font-semibold text-slate-500 truncate mt-0.5">${t.dept}</p>
-                                    </div>
-                                </div>
-                                <div class="mt-auto space-y-2">
-                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                                        <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Site Location</p>
-                                        <span class="text-xs font-semibold text-slate-700">${siteText}</span>
-                                    </div>
-                                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-200 flex items-center justify-between">
-                                        <p class="text-[9px] uppercase font-bold text-slate-400 tracking-wider">Priority Level</p>
-                                        <span class="${pColor} px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider">${t.priority || 'Normal'}</span>
-                                    </div>
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="py-4 px-4 align-top">
+                            <span class="font-black text-slate-900 font-mono block">#${t.id}</span>
+                            <span class="text-[11px] text-slate-500 font-medium block mt-0.5">${displayDate}</span>
+                        </td>
+                        <td class="py-4 px-4 align-top">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-200 flex-shrink-0">${initials}</div>
+                                <div>
+                                    <p class="font-bold text-slate-900 text-xs">${t.name}</p>
+                                    <p class="text-[11px] text-slate-500">${t.dept}</p>
                                 </div>
                             </div>
-
-                            <div class="col-span-1 lg:col-span-4 p-5 flex flex-col">
-                                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-wider">Category</p>
-                                <p class="font-semibold text-slate-800 text-xs mb-3 bg-slate-100 px-2 py-1 rounded inline-block w-max">${t.category}</p>
-                                <p class="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-wider">Description</p>
-                                <div class="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">${desc}</div>
-                                <div class="mt-auto pt-4">${solutionDisplay}</div>
+                        </td>
+                        <td class="py-4 px-4 align-top max-w-[280px]">
+                            <span class="font-bold text-slate-800 text-xs bg-slate-100 border border-slate-200 px-2 py-0.5 rounded inline-block mb-1">${t.category}</span>
+                            <p class="text-xs text-slate-700 font-medium line-clamp-2">${desc}</p>
+                            <span class="text-[10px] text-slate-400 block font-semibold mt-1">📍 ${t.site || 'N/A'}</span>
+                        </td>
+                        <td class="py-4 px-4 align-top">
+                            <div class="mb-1.5">${statusBadge}</div>
+                            <span class="text-[11px] font-semibold text-slate-700 block">👤 ${t.engineer || 'Unassigned'}</span>
+                        </td>
+                        <td class="py-4 px-4 align-top text-right">
+                            <div class="flex items-center justify-end gap-2">
+                                ${whatsappBtn}
+                                <button onclick="window.openModal('${t.id}')" class="px-3 py-1.5 bg-indigo-600 text-white rounded-lg font-bold text-xs hover:bg-indigo-700 transition shadow-sm">
+                                    Manage
+                                </button>
                             </div>
-
-                            <div class="col-span-1 lg:col-span-5 p-5 bg-slate-50 flex flex-col">
-                                <div class="grid grid-cols-2 gap-4 mb-4">
-                                    <div>
-                                        <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block tracking-wider">Update Status</label>
-                                        <select onchange="window.updateStatus('${t.id}', this.value)" class="${sColor} w-full p-2.5 rounded-lg font-semibold text-xs transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                                            <option value="Open" ${t.status === 'Open' ? 'selected' : ''}>Open</option>
-                                            <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
-                                            <option value="Resolved" ${t.status === 'Resolved' ? 'selected' : ''}>Resolved</option>
-                                        </select>
-                                    </div>
-                                    <div>
-                                        <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block tracking-wider">Assign Agent</label>
-                                        <input type="text" value="${t.engineer === 'Unassigned' ? '' : t.engineer}" placeholder="Agent name..." 
-                                            onblur="window.assignEngineer('${t.id}', this.value)" class="w-full border border-slate-200 bg-white rounded-lg p-2.5 text-xs font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none transition">
-                                    </div>
-                                </div>
-                                <label class="text-[10px] uppercase font-bold text-slate-400 mb-1 block tracking-wider">Resolution Notes</label>
-                                <textarea id="sol-${t.id}" placeholder="Type notes here..." class="flex-1 w-full p-3 rounded-xl border border-slate-200 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 outline-none resize-none text-sm text-slate-700 min-h-[80px] mb-3">${t.solution || ''}</textarea>
-                                <div class="flex gap-2 mt-auto">
-                                    <button onclick="window.deleteTicket('${t.id}')" title="Delete Ticket" class="px-3 py-2 bg-white border border-slate-200 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition font-bold flex items-center justify-center">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                    </button>
-                                    ${whatsappBtn}
-                                    <button onclick="window.updateSolution('${t.id}', event)" class="flex-1 bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition text-sm">
-                                        Save Notes
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        </td>
+                    </tr>
                 `;
             });
+        };
+
+        window.openModal = function(id) {
+            const t = window.tickets.find(x => x.id === id);
+            if(!t) return;
+            activeModalTicketId = id;
+
+            document.getElementById('modal-ticket-id').innerText = '#' + t.id;
+            document.getElementById('modal-name').innerText = t.name;
+            document.getElementById('modal-dept').innerText = t.dept;
+            document.getElementById('modal-site').innerText = t.site || 'N/A';
+            document.getElementById('modal-mobile').innerText = t.mobile;
+            document.getElementById('modal-category').innerText = t.category + (t.priority ? ` (${t.priority} Priority)` : '');
+            document.getElementById('modal-desc').innerText = t.description || t.desc || 'No description';
+            document.getElementById('modal-status-select').value = t.status;
+            document.getElementById('modal-engineer-input').value = t.engineer === 'Unassigned' ? '' : t.engineer;
+            document.getElementById('modal-solution-textarea').value = t.solution || '';
+
+            let statusBadgeHtml = `<span class="bg-indigo-50 text-indigo-700 border border-indigo-200 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase">${t.status}</span>`;
+            if(t.status === 'Resolved') statusBadgeHtml = `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-0.5 rounded text-[10px] font-bold uppercase">${t.status}</span>`;
+            document.getElementById('modal-ticket-status-badge').innerHTML = statusBadgeHtml;
+
+            let cleanPhone = (t.mobile || '').replace(/\D/g, '');
+            if (cleanPhone.length === 10) cleanPhone = '91' + cleanPhone;
+            const waMessage = encodeURIComponent(`Dear ${t.name}, this is an automated update from the IT Support Hub. Ticket #${t.id} is now ${t.status}. Details: ${t.solution || 'Resolved'}.`);
+            document.getElementById('modal-whatsapp-container').innerHTML = cleanPhone ? `
+                <a href="https://wa.me/${cleanPhone}?text=${waMessage}" target="_blank" class="px-3 py-2.5 bg-emerald-50 border border-emerald-300 text-emerald-800 hover:bg-emerald-100 rounded-xl font-bold text-xs flex items-center gap-1.5 transition shadow-sm">
+                    ${whatsappSvgIcon} WhatsApp
+                </a>
+            ` : '';
+
+            document.getElementById('ticket-modal').classList.remove('hidden');
+        };
+
+        window.closeModal = function() {
+            document.getElementById('ticket-modal').classList.add('hidden');
+            activeModalTicketId = null;
+        };
+
+        window.saveActiveModalTicket = async function() {
+            if(!activeModalTicketId) return;
+            const newStatus = document.getElementById('modal-status-select').value;
+            const newEngineer = document.getElementById('modal-engineer-input').value.trim() || 'Unassigned';
+            const newSolution = document.getElementById('modal-solution-textarea').value.trim();
+
+            try {
+                const { error } = await supabaseClient.from('tickets').update({
+                    status: newStatus,
+                    engineer: newEngineer,
+                    solution: newSolution
+                }).eq('id', activeModalTicketId);
+
+                if(error) throw error;
+                window.closeModal();
+                window.loadTickets();
+            } catch(e) {
+                alert("Failed to save changes: " + e.message);
+            }
+        };
+
+        window.deleteActiveModalTicket = async function() {
+            if(!activeModalTicketId) return;
+            if(confirm('Permanently delete this ticket record?')) {
+                try {
+                    await supabaseClient.from('tickets').delete().eq('id', activeModalTicketId);
+                    window.closeModal();
+                    window.loadTickets();
+                } catch(e) {
+                    alert("Failed to delete ticket: " + e.message);
+                }
+            }
         };
 
         window.updateStatus = async function(id, newStatus) {
@@ -618,49 +718,6 @@
                 window.loadTickets(); 
             } 
             catch (e) { alert("Failed to update status: " + e.message); }
-        };
-
-        window.assignEngineer = async function(id, engName) {
-            try { await supabaseClient.from('tickets').update({ engineer: engName.trim() || 'Unassigned' }).eq('id', id); window.loadTickets(); } 
-            catch (e) { alert("Failed to assign engineer: " + e.message); }
-        };
-
-        window.updateSolution = async function(id, event) {
-            const btn = event.target; 
-            const textElement = document.getElementById(`sol-${id}`); 
-            const text = textElement.value.trim(); 
-            const originalText = btn.innerText;
-            
-            btn.innerText = "Saving...";
-            try {
-                const { error } = await supabaseClient.from('tickets').update({ solution: text }).eq('id', id);
-                if(error) throw error;
-                
-                btn.innerText = "Saved!"; 
-                btn.classList.replace('bg-indigo-600', 'bg-emerald-600'); 
-                btn.classList.replace('hover:bg-indigo-700', 'hover:bg-emerald-700');
-                
-                const t = window.tickets.find(x => x.id === id); 
-                if(t) t.solution = text;
-                
-                setTimeout(() => window.renderTable(), 500);
-                setTimeout(() => { 
-                    btn.innerText = originalText; 
-                    btn.classList.replace('bg-emerald-600', 'bg-indigo-600'); 
-                    btn.classList.replace('hover:bg-emerald-700', 'hover:bg-indigo-700'); 
-                }, 2000);
-            } catch (e) { 
-                alert("Database Error: " + e.message); 
-                btn.innerText = "Error"; 
-                btn.classList.replace('bg-indigo-600', 'bg-red-600'); 
-            }
-        };
-
-        window.deleteTicket = async function(id) {
-            if(confirm('Permanently delete this ticket record?')) {
-                try { await supabaseClient.from('tickets').delete().eq('id', id); window.loadTickets(); } 
-                catch (e) { alert("Failed to delete ticket: " + e.message); }
-            }
         };
     </script>
 </body>
